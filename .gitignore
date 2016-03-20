@@ -1,0 +1,13 @@
+/src/Release
+/workspace/.metadata
+/src/spec.d
+/tools/arduino
+/tools/eclipseArduino
+/workspace/RemoteSystemsTempFiles
+/src/.settings/language.settings.xml
+/src/.settings/org.eclipse.cdt.core.prefs
+/workspace/DUMP_arduino_avr_mega_ArduinoIDE.tmp
+/workspace/post_processing_boards.txt
+/workspace/post_processing_platform.txt
+/workspace/pre_processing_boards.txt
+/workspace/pre_processing_platform.txt

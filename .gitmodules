@@ -4,3 +4,6 @@
 [submodule "lib/comp/Adafruit_MQTT_Library"]
 	path = lib/comp/Adafruit_MQTT_Library
 	url = https://github.com/adafruit/Adafruit_MQTT_Library.git
+[submodule "lib/comp/Adafruit_PWM_Servo_Driver_Library"]
+	path = lib/comp/Adafruit_PWM_Servo_Driver_Library
+	url = https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.git
