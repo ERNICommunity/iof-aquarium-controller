@@ -1,0 +1,6 @@
+[submodule "lib/plat/timer"]
+	path = lib/plat/timer
+	url = https://github.com/dniklaus/arduino-utils-timer.git
+[submodule "lib/comp/Adafruit_MQTT_Library"]
+	path = lib/comp/Adafruit_MQTT_Library
+	url = https://github.com/adafruit/Adafruit_MQTT_Library.git
