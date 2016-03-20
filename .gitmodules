@@ -7,3 +7,6 @@
 [submodule "lib/comp/Adafruit_PWM_Servo_Driver_Library"]
 	path = lib/comp/Adafruit_PWM_Servo_Driver_Library
 	url = https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.git
+[submodule "lib/comp/pubsubclient"]
+	path = lib/comp/pubsubclient
+	url = https://github.com/knolleary/pubsubclient.git
