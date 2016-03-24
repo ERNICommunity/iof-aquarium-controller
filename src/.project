@@ -92,9 +92,39 @@
 			<locationURI>iof_aquarium_controllerAdafruit_PWM_Servo_Driver_Library/Adafruit_PWM_Servo_Driver_Library</locationURI>
 		</link>
 		<link>
+			<name>comp/CmdArduino</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerCmdArduino/CmdArduino</locationURI>
+		</link>
+		<link>
+			<name>comp/pubsubclient</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerpubsubclient/pubsubclient</locationURI>
+		</link>
+		<link>
 			<name>plat/Timer</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerTimer/Timer</locationURI>
+		</link>
+		<link>
+			<name>plat/debug_cli</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerdebug_cli/debug_cli</locationURI>
+		</link>
+		<link>
+			<name>plat/debug_trace</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerdebug_trace/debug_trace</locationURI>
+		</link>
+		<link>
+			<name>prod/FishActuator</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerFishActuator/FishActuator</locationURI>
+		</link>
+		<link>
+			<name>prod/sockets</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllersockets/sockets</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
