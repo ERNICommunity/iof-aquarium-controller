@@ -7,8 +7,11 @@
 
 #include "Fish.h"
 #include "FishCollection.h"
-#include "../FishActuator.h"
+#include "FishActuator.h"
+#include "FishHal.h"
 #include "Timer.h"
+
+#include <Arduino.h>
 
 //-----------------------------------------------------------------------------
 
@@ -91,7 +94,12 @@ void Fish::activateMotion()
   {
     m_collection->setIsBusy(true);
     m_actionTimer->startTimer(m_collection->activeTimeMillis());
-    // TODO: trigger motion sequence here
+
+    m_collection->hal()->setAngle(m_fishHwId, -45);
+    delay(50);
+    m_collection->hal()->setAngle(m_fishHwId, 45);
+    delay(50);
+    m_collection->hal()->setAngle(m_fishHwId, 0);
   }
 }
 

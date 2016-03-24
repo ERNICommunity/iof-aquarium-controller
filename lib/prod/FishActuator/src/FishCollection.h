@@ -10,6 +10,7 @@
 
 class FishNotificationAdapter;
 class Fish;
+class FishHal;
 
 class FishCollection
 {
@@ -36,6 +37,8 @@ public:
    */
   Fish* findFishByHwId(unsigned int fishHwId);
 
+  FishHal* hal();
+
 public:
   /**
    * Get busy state of the Fish Collection.
@@ -52,6 +55,7 @@ public:
 private:
   FishNotificationAdapter* m_adapter;
   Fish* m_fish;                         /// Root node of single linked list containing the configured Fish objects.
+  FishHal* m_hal;
   unsigned long m_activeTimeMillis;     /// Time period for timer running during fish motion activity.
   unsigned long m_restTimeMillis;       /// Time period for timer running during fish rest time after the motion activity has been finished.
   bool m_isBusy;                        /// Busy state of the Fish Collection: true: A Fish is in action; false: none of the Fish is moving.

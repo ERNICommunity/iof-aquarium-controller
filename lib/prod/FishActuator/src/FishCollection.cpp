@@ -8,12 +8,14 @@
 #include "FishCollection.h"
 #include "FishActuator.h"
 #include "Fish.h"
+#include "FishHal.h"
 
 //#include "Arduino.h"
 
 FishCollection::FishCollection()
 : m_adapter(0)
 , m_fish(0)
+, m_hal(new FishHal())
 , m_activeTimeMillis(5000)
 , m_restTimeMillis(2000)
 , m_isBusy(false)
@@ -164,3 +166,7 @@ void FishCollection::setIsBusy(bool isBusy)
 
 }
 
+FishHal* FishCollection::hal()
+{
+  return m_hal;
+}
