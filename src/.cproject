@@ -40,6 +40,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_cli}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_trace}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/pubsubclient/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/CapSensor}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.arduino.compiler.cpp.sketch.input.1426847132" name="CPP source files" superClass="it.baeyens.arduino.compiler.cpp.sketch.input"/>
 							</tool>
@@ -66,6 +67,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_cli}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_trace}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/pubsubclient/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/CapSensor}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.arduino.compiler.c.sketch.input.231492211" name="C Source Files" superClass="it.baeyens.arduino.compiler.c.sketch.input"/>
 							</tool>
@@ -92,5 +94,10 @@
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/iof_aquarium_controller"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

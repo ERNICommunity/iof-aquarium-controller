@@ -117,6 +117,11 @@
 			<locationURI>iof_aquarium_controllerdebug_trace/debug_trace</locationURI>
 		</link>
 		<link>
+			<name>prod/CapSensor</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerCapSensor/CapSensor</locationURI>
+		</link>
+		<link>
 			<name>prod/FishActuator</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerFishActuator/FishActuator</locationURI>
@@ -130,15 +135,15 @@
 	<variableList>
 		<variable>
 			<name>ArduinoHardwareLibPath</name>
-			<value>file:/C:/Users/niklausd/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/libraries</value>
+			<value>file:/C:/Users/nid/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/libraries</value>
 		</variable>
 		<variable>
 			<name>ArduinoPinPath</name>
-			<value>file:/C:/Users/niklausd/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/variants</value>
+			<value>file:/C:/Users/nid/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/variants</value>
 		</variable>
 		<variable>
 			<name>ArduinoPlatformPath</name>
-			<value>file:/C:/Users/niklausd/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/cores</value>
+			<value>file:/C:/Users/nid/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/cores</value>
 		</variable>
 	</variableList>
 </projectDescription>
