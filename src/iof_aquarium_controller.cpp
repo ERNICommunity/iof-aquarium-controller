@@ -101,7 +101,6 @@ public:
     else
     {
       unsigned int hwId = atoi(args[idxToFirstArgToHandle]);
-      Serial.printf("Add Fish with HW ID=%d\n", hwId);
       m_fishActuator->addFishAtHwId(hwId);
     }
   }

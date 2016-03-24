@@ -5,9 +5,10 @@
  *      Author: niklausd
  */
 
-#include "../FishActuator.h"
+#include "FishActuator.h"
 #include "FishCollection.h"
 
+//#include "Arduino.h"
 
 FishActuator::FishActuator()
 : m_fishCollection(new FishCollection())
@@ -31,6 +32,7 @@ void FishActuator::addFishAtHwId(unsigned int fishHwId)
 {
   if (0 != m_fishCollection)
   {
+//    Serial.printf("FishActuator::addFishAtHwId(): Add Fish with HW ID=%d\n", fishHwId);
     m_fishCollection->addFishAtHwId(fishHwId);
   }
 }

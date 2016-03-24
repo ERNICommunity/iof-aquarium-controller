@@ -6,8 +6,10 @@
  */
 
 #include "FishCollection.h"
-#include "../FishActuator.h"
+#include "FishActuator.h"
 #include "Fish.h"
+
+//#include "Arduino.h"
 
 FishCollection::FishCollection()
 : m_adapter(0)
@@ -42,7 +44,11 @@ unsigned long FishCollection::restTimeMillis()
 
 void FishCollection::addFishAtHwId(unsigned int fishHwId)
 {
-  if (0 == findFishByHwId(fishHwId))
+//  Serial.printf("FishCollection::addFishAtHwId(): Add Fish with HW ID=%d\n", fishHwId);
+
+  bool found = (findFishByHwId(fishHwId) != 0);
+
+  if (! found)
   {
     Fish* fish = new Fish(fishHwId, this);
     if (0 == m_fish)
@@ -126,20 +132,23 @@ void FishCollection::activateFish(unsigned int fishHwId)
 Fish* FishCollection::findFishByHwId(unsigned int fishHwId)
 {
   Fish* matchingFish = 0;
-  if (m_fish->getFishHwId() == fishHwId)
+  if (0 != m_fish)
   {
-    matchingFish = m_fish;
-  }
-  else
-  {
-    Fish* next = m_fish;
-    while ((next->next() != 0) && (next->next()->getFishHwId() != fishHwId))
+    if (m_fish->getFishHwId() == fishHwId)
     {
-      next = next->next();
+      matchingFish = m_fish;
     }
-    if (next->next() != 0)
+    else
     {
-      matchingFish = next->next();
+      Fish* next = m_fish;
+      while ((next->next() != 0) && (next->next()->getFishHwId() != fishHwId))
+      {
+        next = next->next();
+      }
+      if (next->next() != 0)
+      {
+        matchingFish = next->next();
+      }
     }
   }
   return matchingFish;

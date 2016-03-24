@@ -29,7 +29,6 @@ public:
   unsigned long activeTimeMillis();
   unsigned long restTimeMillis();
 
-protected:
   /**
    * Get the Fish object pointer of the Fish object having the provided HW ID.
    * @param fishHwId Fish Hardware Id {0..n-1}
