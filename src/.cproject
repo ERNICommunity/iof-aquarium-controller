@@ -80,7 +80,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="comp/pubsubclient/tests|comp/CmdArduino/examples|comp/Adafruit_CAP1188_Library/examples|comp/pubsubclient/examples|plat/Timer/Examples|comp/Adafruit_PWM_Servo_Driver_Library/examples|comp/Adafruit_MQTT_Library/examples|Libraries/*/?xamples|Libraries/*/?xtras" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="prod/CapSensor/Examples|comp/pubsubclient/tests|comp/CmdArduino/examples|comp/Adafruit_CAP1188_Library/examples|comp/pubsubclient/examples|plat/Timer/Examples|comp/Adafruit_PWM_Servo_Driver_Library/examples|comp/Adafruit_MQTT_Library/examples|Libraries/*/?xamples|Libraries/*/?xtras" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
