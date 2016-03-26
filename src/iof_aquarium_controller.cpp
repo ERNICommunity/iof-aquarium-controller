@@ -24,7 +24,7 @@
 #define AQUARIUM_ID     "1001"
 #define AQUARIUM_SENSOR "sensor/aquarium-trigger"
 
-#define MY_FISH_ID "1"
+#define MY_FISH_ID "3"
 
 //const char* AQUARIUM_PUB_FEED = "iof/" + OFFICE_COUNTRY + "/" + OFFICE_NAME + "/" + AQUARIUM_ID + "/" + AQUARIUM_SENSOR; //TODO: not working
 //const char* AQUARIUM_SUB_FEED = "iof/+/+/+/" + AQUARIUM_SENSOR;
@@ -150,7 +150,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       break;
   }
 
-  //fishActuator->activateFish(fishId);
+  fishActuator->activateFish(fishId);
 
   Serial.println();
 }
@@ -197,7 +197,9 @@ void setup()
   //---------------------------------------------------------------------------
   fishActuator = new FishActuator();
   fishActuator->attachAdapter(new TestFishNotificationAdapter());
-
+  fishActuator->addFishAtHwId(0);
+  fishActuator->addFishAtHwId(1);
+  fishActuator->addFishAtHwId(2);
   CapSensor* capSensor = new CapSensor(new MyCapSensorAdatper());
   //---------------------------------------------------------------------------
   // Debug Cli
@@ -220,7 +222,8 @@ void setup()
 
 void subscribe()
 {
-  client.subscribe("iof/+/+/sensor/aquarium-trigger");
+  //client.subscribe("iof/ch/berne/sensor/aquarium-trigger");
+  client.subscribe("iof/#");
 }
 
 void reconnect() {
@@ -228,7 +231,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print(F("Attempting MQTT connection..."));
     // Attempt to connect
-    if (client.connect(AQUARIUM_ID)) {
+    if (client.connect(MY_FISH_ID)) {
       Serial.println(F("connected"));
       // resubscribe
       subscribe();
