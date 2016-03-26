@@ -50,6 +50,8 @@ CapSensor::CapSensor(CapSensorAdapter* adapter)
      Serial.println("CAP1188 not found");
      while (1);
    }
+
+   m_adaCap->writeRegister(0x1F, 0x4F);
 }
 
 CapSensor::~CapSensor()
