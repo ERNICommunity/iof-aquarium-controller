@@ -81,24 +81,24 @@ void Fish::activateMotion()
   unsigned long activeTimeMillis = 5000;
   if (0 != m_collection->adapter())
   {
-    if (!isReady())
-    {
-      m_collection->adapter()->notifyFishError(m_fishHwId, FishNotificationAdapter::ErrFishBusy);
-    }
-    else
-    {
+    //if (!isReady())
+    //{
+    //  m_collection->adapter()->notifyFishError(m_fishHwId, FishNotificationAdapter::ErrFishBusy);
+    //}
+    //else
+    //{
       m_collection->adapter()->notifyFishEvent(m_fishHwId, FishNotificationAdapter::EvtFishActivated);
-    }
+    //}
   }
   if (isReady())
   {
     m_collection->setIsBusy(true);
     m_actionTimer->startTimer(m_collection->activeTimeMillis());
 
-    m_collection->hal()->setAngle(m_fishHwId, -45);
-    delay(50);
-    m_collection->hal()->setAngle(m_fishHwId, 45);
-    delay(50);
+    m_collection->hal()->setAngle(m_fishHwId, -90);
+    delay(1000);
+    m_collection->hal()->setAngle(m_fishHwId, 90);
+    delay(1000);
     m_collection->hal()->setAngle(m_fishHwId, 0);
   }
 }
