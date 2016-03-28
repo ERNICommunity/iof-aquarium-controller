@@ -97,6 +97,11 @@
 			<locationURI>iof_aquarium_controllerCmdArduino/CmdArduino</locationURI>
 		</link>
 		<link>
+			<name>comp/CmdSequence</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerCmdSequence/CmdSequence</locationURI>
+		</link>
+		<link>
 			<name>comp/pubsubclient</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerpubsubclient/pubsubclient</locationURI>
