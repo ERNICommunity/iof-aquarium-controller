@@ -135,15 +135,15 @@
 	<variableList>
 		<variable>
 			<name>ArduinoHardwareLibPath</name>
-			<value>file:/C:/Users/nid/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/libraries</value>
+			<value>file:/C:/Users/niklausd/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/libraries</value>
 		</variable>
 		<variable>
 			<name>ArduinoPinPath</name>
-			<value>file:/C:/Users/nid/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/variants</value>
+			<value>file:/C:/Users/niklausd/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/variants</value>
 		</variable>
 		<variable>
 			<name>ArduinoPlatformPath</name>
-			<value>file:/C:/Users/nid/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/cores</value>
+			<value>file:/C:/Users/niklausd/AppData/Roaming/Arduino15/packages/esp8266/hardware/esp8266/2.1.0/cores</value>
 		</variable>
 	</variableList>
 </projectDescription>

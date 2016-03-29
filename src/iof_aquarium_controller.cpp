@@ -11,6 +11,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+#include <Wire.h>
+
 // Update these with values suitable for your network.
 
 #define WIFI_SSID       "IoTAP"
@@ -32,6 +34,10 @@
 WiFiClient espClient;
 PubSubClient client(espClient);
 FishActuator* fishActuator;
+
+#define SDA_PIN 4
+#define SCL_PIN 5
+
 
 //-----------------------------------------------------------------------------
 //
@@ -179,6 +185,8 @@ void setup_wifi() {
 //The setup function is called once at startup of the sketch
 void setup()
 {
+  Wire.begin(SDA_PIN, SCL_PIN);
+
   cmdInit(115200); //contains Serial.begin(115200);
 
   Serial.println();
@@ -189,8 +197,8 @@ void setup()
 
   setup_wifi();
 
-   client.setServer(MQTT_SERVER_IP, MQTT_PORT);
-   client.setCallback(callback);
+  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
+  client.setCallback(callback);
 
   //---------------------------------------------------------------------------
   // Fish Actuator

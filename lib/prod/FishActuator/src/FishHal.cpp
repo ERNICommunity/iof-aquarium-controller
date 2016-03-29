@@ -6,7 +6,6 @@
  */
 
 #include <FishHal.h>
-#include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 #include <DbgCliCommand.h>
@@ -57,12 +56,9 @@ private: // forbidden default functions
 #define SERVOMAX  540 // this is the 'maximum' pulse length count (out of 4096)
 
 FishHal::FishHal()
-: m_SDA_PIN(4)
-, m_SCL_PIN(5)
-, m_pwm(new Adafruit_PWMServoDriver())
+: m_pwm(new Adafruit_PWMServoDriver())
 , m_dbgCmd(new HalDbgCmd_Angle(this))
 {
-  Wire.begin(m_SDA_PIN, m_SCL_PIN);
   m_pwm->begin();
   m_pwm->setPWMFreq(60);  // Analog servos run at ~60 Hz updates
 }

@@ -11,7 +11,7 @@
 #include "FishHal.h"
 #include "Timer.h"
 
-#include <Arduino.h>
+//#include <Arduino.h>
 
 //-----------------------------------------------------------------------------
 
@@ -96,9 +96,9 @@ void Fish::activateMotion()
     m_actionTimer->startTimer(m_collection->activeTimeMillis());
 
     m_collection->hal()->setAngle(m_fishHwId, -90);
-    delay(1000);
+//    delay(1000);
     m_collection->hal()->setAngle(m_fishHwId, 90);
-    delay(1000);
+//    delay(1000);
     m_collection->hal()->setAngle(m_fishHwId, 0);
   }
 }

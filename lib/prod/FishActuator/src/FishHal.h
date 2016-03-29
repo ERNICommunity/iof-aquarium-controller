@@ -24,8 +24,6 @@ public:
    */
   void setAngle(unsigned int portId, int angle);
 private:
-  int m_SDA_PIN;
-  int m_SCL_PIN;
   Adafruit_PWMServoDriver* m_pwm;
   DbgCli_Command* m_dbgCmd;
 
