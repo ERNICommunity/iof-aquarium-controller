@@ -64,7 +64,6 @@ private:
   Timer* m_debounceTimer;
   CapSensorAdapter* m_adapter;
   Adafruit_CAP1188* m_adaCap;
-  unsigned int m_touched;
   static const int s_defaultKeyPollTime;
   
 private:  // forbidden functions
