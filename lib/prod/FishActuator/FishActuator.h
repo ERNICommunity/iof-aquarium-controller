@@ -8,6 +8,8 @@
 #ifndef PROD_FISHACTUATOR_FISHACTUATOR_H_
 #define PROD_FISHACTUATOR_FISHACTUATOR_H_
 
+class DbgCli_Topic;
+
 //-----------------------------------------------------------------------------
 
 class FishNotificationAdapter
@@ -96,8 +98,11 @@ public:
    */
   void activateFish(unsigned int fishHwId);
 
+  DbgCli_Topic* dbgCliTopic();
+
 private:
   FishCollection* m_fishCollection;  /// Pointer to the Fish Collection component object.
+  DbgCli_Topic* m_dbgCliTopic;
 
 private:  // forbidden functions
   FishActuator(const FishActuator& src);              // copy constructor
