@@ -9,6 +9,7 @@
 #include "FishActuator.h"
 #include "Fish.h"
 #include "FishHal.h"
+#include "MotionSequencer.h"
 
 //#include "Arduino.h"
 
@@ -16,13 +17,20 @@ FishCollection::FishCollection()
 : m_adapter(0)
 , m_fish(0)
 , m_hal(new FishHal())
+, m_sequencer(new MotionSequencer(this))
 , m_activeTimeMillis(5000)
 , m_restTimeMillis(2000)
 , m_isBusy(false)
 { }
 
 FishCollection::~FishCollection()
-{ }
+{
+  delete m_sequencer;
+  m_sequencer = 0;
+
+  delete m_hal;
+  m_hal = 0;
+}
 
 void FishCollection::attachAdapter(FishNotificationAdapter* adapter)
 {
@@ -34,15 +42,15 @@ FishNotificationAdapter* FishCollection::adapter()
   return m_adapter;
 }
 
-unsigned long FishCollection::activeTimeMillis()
-{
-  return m_activeTimeMillis;
-}
-
-unsigned long FishCollection::restTimeMillis()
-{
-  return m_restTimeMillis;
-}
+//unsigned long FishCollection::activeTimeMillis()
+//{
+//  return m_activeTimeMillis;
+//}
+//
+//unsigned long FishCollection::restTimeMillis()
+//{
+//  return m_restTimeMillis;
+//}
 
 void FishCollection::addFishAtHwId(unsigned int fishHwId)
 {
@@ -116,10 +124,7 @@ void FishCollection::activateFish(unsigned int fishHwId)
   Fish* fish = findFishByHwId(fishHwId);
   if (0 != fish)
   {
-    if (!isBusy())
-    {
-      fish->activateMotion();
-    }
+    fish->activateMotion();
   }
   else
   {
@@ -158,15 +163,15 @@ Fish* FishCollection::findFishByHwId(unsigned int fishHwId)
 
 bool FishCollection::isBusy()
 {
-  return false;
-}
-
-void FishCollection::setIsBusy(bool isBusy)
-{
-
+  return m_sequencer->isRunning();
 }
 
 FishHal* FishCollection::hal()
 {
   return m_hal;
+}
+
+MotionSequencer* FishCollection::motionSequencer()
+{
+  return m_sequencer;
 }

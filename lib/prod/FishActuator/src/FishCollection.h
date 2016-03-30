@@ -11,6 +11,7 @@
 class FishNotificationAdapter;
 class Fish;
 class FishHal;
+class MotionSequencer;
 
 class FishCollection
 {
@@ -27,8 +28,8 @@ public:
 
   void activateFish(unsigned int fishHwId);
 
-  unsigned long activeTimeMillis();
-  unsigned long restTimeMillis();
+//  unsigned long activeTimeMillis();
+//  unsigned long restTimeMillis();
 
   /**
    * Get the Fish object pointer of the Fish object having the provided HW ID.
@@ -39,23 +40,20 @@ public:
 
   FishHal* hal();
 
+  MotionSequencer* motionSequencer();
+
 public:
   /**
    * Get busy state of the Fish Collection.
-   * @return isBusy true: A Fish is in action; false: none of the Fish is moving.
+   * @return isBusy true: A Fish is in action; false: none of the Fish are moving.
    */
   bool isBusy();
-
-  /**
-   * Set the busy state of the Fish Collection.
-   * @param isBusy true: A Fish is in action; false: none of the Fish is moving.
-   */
-  void setIsBusy(bool isBusy);
 
 private:
   FishNotificationAdapter* m_adapter;
   Fish* m_fish;                         /// Root node of single linked list containing the configured Fish objects.
   FishHal* m_hal;
+  MotionSequencer* m_sequencer;
   unsigned long m_activeTimeMillis;     /// Time period for timer running during fish motion activity.
   unsigned long m_restTimeMillis;       /// Time period for timer running during fish rest time after the motion activity has been finished.
   bool m_isBusy;                        /// Busy state of the Fish Collection: true: A Fish is in action; false: none of the Fish is moving.
@@ -64,7 +62,6 @@ private:
 private:  // forbidden functions
   FishCollection(const FishCollection& src);              // copy constructor
   FishCollection& operator = (const FishCollection& src); // assignment operator
-
 };
 
 #endif /* PROD_FISHACTUATOR_SRC_FISHCOLLECTION_H_ */

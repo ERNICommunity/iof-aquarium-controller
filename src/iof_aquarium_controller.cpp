@@ -38,11 +38,10 @@ FishActuator* fishActuator;
 #define SDA_PIN 4
 #define SCL_PIN 5
 
-
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
-class TestFishNotificationAdapter : public FishNotificationAdapter
+class TestFishNotificationAdapter: public FishNotificationAdapter
 {
 public:
   void notifyFishEvent(unsigned int fishHwId, FishEvent event)
@@ -63,54 +62,61 @@ public:
   }
 };
 
-class MyCapSensorAdatper : public CapSensorAdapter
+//-----------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------
+class MyCapSensorAdatper: public CapSensorAdapter
 {
-
+private:
+  FishActuator* m_fishActuator;
+  unsigned int m_hwId;
 public:
-  MyCapSensorAdatper()
+  MyCapSensorAdatper(FishActuator* fishActuator, unsigned int hwId)
+  : m_fishActuator(fishActuator)
+  , m_hwId(hwId)
   { }
 
   virtual void notifyCapTouched()
   {
-    // no it is time to do something
+    // now it is time to do something
     Serial.println("Touch down!");
-
-    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
+    m_fishActuator->activateFish(m_hwId);
+//    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
   }
 
 };
 
-//-----------------------------------------------------------------------------
-// Debugging
-//-----------------------------------------------------------------------------
-class DbgCli_Command_AddFish : public DbgCli_Command
-{
-private:
-  FishActuator* m_fishActuator;
-public:
-  DbgCli_Command_AddFish(FishActuator* fishActuator)
-  : DbgCli_Command(new DbgCli_Topic(DbgCli_Node::RootNode(), "fish", "Fish test commands"), "add", "Add Fish; .")
-  , m_fishActuator(fishActuator)
-  { }
-
-  void printUsage()
-  {
-    Serial.println("dbg fish add - usage: {0..15}");
-  }
-
-  void execute(unsigned int argc, const char** args, unsigned int idxToFirstArgToHandle)
-  {
-    if (argc < 4)
-    {
-      printUsage();
-    }
-    else
-    {
-      unsigned int hwId = atoi(args[idxToFirstArgToHandle]);
-      m_fishActuator->addFishAtHwId(hwId);
-    }
-  }
-};
+////-----------------------------------------------------------------------------
+//// Debugging
+////-----------------------------------------------------------------------------
+//class DbgCli_Command_AddFish : public DbgCli_Command
+//{
+//private:
+//  FishActuator* m_fishActuator;
+//public:
+//  DbgCli_Command_AddFish(FishActuator* fishActuator)
+//  : DbgCli_Command(new DbgCli_Topic(DbgCli_Node::RootNode(), "fish", "Fish test commands"), "add", "Add Fish; .")
+//  , m_fishActuator(fishActuator)
+//  { }
+//
+//  void printUsage()
+//  {
+//    Serial.println("dbg fish add - usage: {0..15}");
+//  }
+//
+//  void execute(unsigned int argc, const char** args, unsigned int idxToFirstArgToHandle)
+//  {
+//    if (argc < 4)
+//    {
+//      printUsage();
+//    }
+//    else
+//    {
+//      unsigned int hwId = atoi(args[idxToFirstArgToHandle]);
+//      m_fishActuator->addFishAtHwId(hwId);
+//    }
+//  }
+//};
 
 //-----------------------------------------------------------------------------
 // Arduino Cmd I/F
@@ -129,21 +135,23 @@ void hello(int arg_cnt, char **args)
   Serial.println("Hello world.");
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char* topic, byte* payload, unsigned int length)
+{
   unsigned int fishId = 0;
   Serial.print(F("Message arrived ["));
   Serial.print(topic);
   Serial.print(F("] "));
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-
-  if(NULL == fishActuator)
+  for (int i = 0; i < length; i++)
   {
-     return;
+    Serial.print((char) payload[i]);
   }
 
-  switch(payload[0])
+  if (NULL == fishActuator)
+  {
+    return;
+  }
+
+  switch (payload[0])
   {
     case '1':
       fishId = 0;
@@ -161,7 +169,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println();
 }
 
-void setup_wifi() {
+void setup_wifi()
+{
 
   delay(10);
   // We start by connecting to a WiFi network
@@ -171,7 +180,8 @@ void setup_wifi() {
 
   WiFi.begin(WIFI_SSID, WIFI_PWD);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -197,8 +207,8 @@ void setup()
 
   setup_wifi();
 
-  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
-  client.setCallback(callback);
+//  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
+//  client.setCallback(callback);
 
   //---------------------------------------------------------------------------
   // Fish Actuator
@@ -208,13 +218,11 @@ void setup()
   fishActuator->addFishAtHwId(0);
   fishActuator->addFishAtHwId(1);
   fishActuator->addFishAtHwId(2);
-  CapSensor* capSensor = new CapSensor(new MyCapSensorAdatper());
+  CapSensor* capSensor = new CapSensor(new MyCapSensorAdatper(fishActuator, 0));
+
   //---------------------------------------------------------------------------
   // Debug Cli
   //---------------------------------------------------------------------------
-  DbgCli_Node::AssignRootNode(new DbgCli_Topic(0, "dbg", "Aquarium Controller Debug CLI Root Node."));
-  //  new DbgCli_Command_FreeRam();
-  new DbgCli_Command_AddFish(fishActuator);
   // adding CLI Commands
   cmdAdd("hello", hello);
   cmdAdd("dbg", dbgCliExecute);
@@ -231,19 +239,24 @@ void setup()
 void subscribe()
 {
   //client.subscribe("iof/ch/berne/sensor/aquarium-trigger");
-  client.subscribe("iof/#");
+//  client.subscribe("iof/#");
 }
 
-void reconnect() {
+void reconnect()
+{
   // Loop until we're reconnected
-  while (!client.connected()) {
+  while (!client.connected())
+  {
     Serial.print(F("Attempting MQTT connection..."));
     // Attempt to connect
-    if (client.connect(MY_FISH_ID)) {
+    if (client.connect(MY_FISH_ID))
+    {
       Serial.println(F("connected"));
       // resubscribe
       subscribe();
-    } else {
+    }
+    else
+    {
       Serial.print(F("failed, rc="));
       Serial.print(client.state());
       Serial.println(F(" try again in 5 seconds"));
@@ -253,15 +266,15 @@ void reconnect() {
   }
 }
 
-
 // The loop function is called in an endless loop
 void loop()
 {
-  if (!client.connected()) {
-      reconnect();
-   }
+//  if (!client.connected())
+//  {
+//    reconnect();
+//  }
 
   yield();
-  client.loop(); //must be called regularly
+//  client.loop(); //must be called regularly
   cmdPoll();
 }

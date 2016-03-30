@@ -10,6 +10,7 @@
 
 class Timer;
 class FishCollection;
+class MotionSequencer;
 
 class Fish
 {
@@ -82,8 +83,8 @@ protected:
   void setNext(Fish* fish);
 
 private:
-  Timer* m_actionTimer;               /// Timer running during motion activity.
-  Timer* m_restPeriodTimer;           /// Timer running during rest time after the motion activity has been finished.
+//  Timer* m_actionTimer;               /// Timer running during motion activity.
+//  Timer* m_restPeriodTimer;           /// Timer running during rest time after the motion activity has been finished.
   unsigned int m_fishHwId;
   FishCollection* m_collection;
   Fish* m_next;
