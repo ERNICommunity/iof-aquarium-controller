@@ -92,10 +92,13 @@ MotionSequencer::~MotionSequencer()
 
 void MotionSequencer::prepareSequence()
 {
-  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis, -90, 1);
-  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,   0, 1);
-  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,  90, 1);
-  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,   0, 1);
+  int velocity = 2;
+  unsigned long pauseTimeMillis = 500;
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis, -90, velocity);
+  new CmdStop(m_sequence, pauseTimeMillis);
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,  90, velocity);
+  new CmdStop(m_sequence, pauseTimeMillis);
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,   0, velocity);
 }
 
 FishCollection* MotionSequencer::collection()
