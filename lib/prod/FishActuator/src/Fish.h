@@ -39,6 +39,10 @@ public:
    */
   unsigned int getFishHwId();
 
+  int getAngle();
+
+  void setAngle(int angle);
+
   /**
    * Get FishCollection context.
    * @return fishCollection Pointer to the FishCollection object.
@@ -85,7 +89,8 @@ protected:
 private:
 //  Timer* m_actionTimer;               /// Timer running during motion activity.
 //  Timer* m_restPeriodTimer;           /// Timer running during rest time after the motion activity has been finished.
-  unsigned int m_fishHwId;
+  unsigned int m_fishHwId;              /// HW port ID
+  int m_angle;                          /// Current Angle
   FishCollection* m_collection;
   Fish* m_next;
 

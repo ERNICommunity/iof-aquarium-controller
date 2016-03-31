@@ -11,6 +11,9 @@
 #include <FishCollection.h>
 #include <FishHal.h>
 #include <Fish.h>
+#include <VelocityControl.h>
+
+//-----------------------------------------------------------------------------
 
 class MyCmdSeqAdapter : public CmdAdapter
 {
@@ -22,23 +25,25 @@ public:
   : m_sequencer(sequencer)
   { }
 
-  void moveToAngleAction(int angle)
+  void moveToAngleAction(int angle, int velocity)
   {
-    m_sequencer->collection()->hal()->setAngle(m_sequencer->fishInMotion()->getFishHwId(), angle);
+    m_sequencer->velocityControl()->goToTargetAngle(angle, velocity);
   }
 
   void stopAction() { }
 
 private: // forbidden default functions
+  MyCmdSeqAdapter();
   MyCmdSeqAdapter& operator = (const MyCmdSeqAdapter& );  // assignment operator
   MyCmdSeqAdapter(const MyCmdSeqAdapter& src);            // copy constructor
 };
 
 //-----------------------------------------------------------------------------
 
-CmdMoveToAngle::CmdMoveToAngle(CmdSequence* cmdSeq, int angle)
-: CmdHandler(cmdSeq, 200, "CmdMoveToAngle")
+CmdMoveToAngle::CmdMoveToAngle(CmdSequence* cmdSeq, unsigned long cmdTimeOutMillis, int angle, int velocity)
+: CmdHandler(cmdSeq, cmdTimeOutMillis, "CmdMoveToAngle")
 , m_angle(angle)
+, m_velocity(velocity)
 { }
 
 void CmdMoveToAngle::execute()
@@ -48,17 +53,21 @@ void CmdMoveToAngle::execute()
     MyCmdSeqAdapter* adapter = static_cast<MyCmdSeqAdapter*>(cmdSequence()->adapter());
     if (0 != adapter)
     {
-      adapter->moveToAngleAction(m_angle);
+      adapter->moveToAngleAction(m_angle, m_velocity);
     }
   }
 }
 
 //-----------------------------------------------------------------------------
 
-MotionSequencer::MotionSequencer(FishCollection* collection)
+const unsigned long MotionSequencer::s_cmdTimeOutMillis = 10000;
+
+MotionSequencer::MotionSequencer(FishCollection* collection, unsigned long cmdTimeOutMillis)
 : m_sequence(new CmdSequence(new MyCmdSeqAdapter(this)))
 , m_collection(collection)
+, m_velocityControl(new VelocityControl(this))
 , m_fishInMotion(0)
+, m_cmdTimeOutMillis(cmdTimeOutMillis)
 {
   FishHal* hal = m_collection->hal();
   if (0 != hal)
@@ -73,6 +82,8 @@ MotionSequencer::MotionSequencer(FishCollection* collection)
 
 MotionSequencer::~MotionSequencer()
 {
+  delete m_velocityControl;
+  m_velocityControl = 0;
   delete m_sequence->adapter();
   m_sequence->attachAdapter(0);
   delete m_sequence;
@@ -81,16 +92,20 @@ MotionSequencer::~MotionSequencer()
 
 void MotionSequencer::prepareSequence()
 {
-
-  new CmdMoveToAngle(m_sequence, -90);
-  new CmdMoveToAngle(m_sequence,   0);
-  new CmdMoveToAngle(m_sequence,  90);
-  new CmdMoveToAngle(m_sequence,   0);
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis, -90, 1);
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,   0, 1);
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,  90, 1);
+  new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis,   0, 1);
 }
 
 FishCollection* MotionSequencer::collection()
 {
   return m_collection;
+}
+
+VelocityControl* MotionSequencer::velocityControl()
+{
+  return m_velocityControl;
 }
 
 void MotionSequencer::startSequence(Fish* fishInMotion)
@@ -107,5 +122,10 @@ Fish* MotionSequencer::fishInMotion()
 bool MotionSequencer::isRunning()
 {
   return m_sequence->isRunning();
+}
+
+void MotionSequencer::execNextCmd()
+{
+  m_sequence->execNextCmd();
 }
 

@@ -13,21 +13,23 @@
 class CmdSequence;
 class FishCollection;
 class Fish;
+class VelocityControl;
 
 //-----------------------------------------------------------------------------
 
 class CmdMoveToAngle : public CmdHandler
 {
 public:
-  CmdMoveToAngle(CmdSequence* cmdSeq, int angle);
+  CmdMoveToAngle(CmdSequence* cmdSeq, unsigned long cmdTimeOutMillis, int angle, int velocity);
   virtual ~CmdMoveToAngle() { }
   virtual void execute();
 
 private:
   int m_angle;
-
+  int m_velocity;
 
 private: // forbidden default functions
+  CmdMoveToAngle();
   CmdMoveToAngle& operator = (const CmdMoveToAngle& );  // assignment operator
   CmdMoveToAngle(const CmdMoveToAngle& src);            // copy constructor
 };
@@ -41,16 +43,16 @@ public:
    * Constructor.
    * @param collection Pointer to FishCollection object.
    */
-  MotionSequencer(FishCollection* collection);
+  MotionSequencer(FishCollection* collection, unsigned long cmdTimeOutMillis = s_cmdTimeOutMillis);
   virtual ~MotionSequencer();
 
-  void startSequence(Fish* fishInMotion);
-
   FishCollection* collection();
+  VelocityControl* velocityControl();
 
+  void startSequence(Fish* fishInMotion);
   Fish* fishInMotion();
-
   bool isRunning();
+  void execNextCmd();
 
 protected:
   void prepareSequence();
@@ -58,7 +60,10 @@ protected:
 private:
   CmdSequence* m_sequence;
   FishCollection* m_collection;
+  VelocityControl* m_velocityControl;
   Fish* m_fishInMotion;
+  unsigned long m_cmdTimeOutMillis;
+  const static unsigned long s_cmdTimeOutMillis;
 
 private: // forbidden default functions
   MotionSequencer& operator = (const MotionSequencer& );  // assignment operator

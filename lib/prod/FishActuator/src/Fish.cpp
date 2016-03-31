@@ -60,6 +60,7 @@ Fish::Fish(unsigned int fishHwId, FishCollection* collection)
 : /*m_actionTimer(new Timer(new ActionTimerAdapter(this), Timer::IS_NON_RECURRING))
 , m_restPeriodTimer(new Timer(new RestPeriodTimerAdapter(this), Timer::IS_NON_RECURRING))
 ,*/ m_fishHwId(fishHwId)
+, m_angle(0)
 , m_collection(collection)
 , m_next(0)
 { }
@@ -79,7 +80,7 @@ Fish::~Fish()
 
 void Fish::activateMotion()
 {
-  unsigned long activeTimeMillis = 5000;
+//  unsigned long activeTimeMillis = 5000;
   if (0 != m_collection->adapter())
   {
 //    if (isBusy())
@@ -118,6 +119,16 @@ FishCollection* Fish::collection()
 //{
 //  return m_restPeriodTimer;
 //}
+
+int Fish::getAngle()
+{
+  return m_angle;
+}
+
+void Fish::setAngle(int angle)
+{
+  m_angle = angle;
+}
 
 bool Fish::isBusy()
 {
