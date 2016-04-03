@@ -50,6 +50,7 @@ public:
   VelocityControl* velocityControl();
 
   void startSequence(Fish* fishInMotion);
+  void stop();
   Fish* fishInMotion();
   bool isRunning();
   void execNextCmd();

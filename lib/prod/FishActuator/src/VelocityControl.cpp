@@ -71,8 +71,11 @@ void VelocityControl::stop()
   // stop the control process, cancel the timer
   m_ctrlTimer->cancelTimer();
 
-  // write current angle back into the fish object
-  m_sequencer->fishInMotion()->setAngle(m_angle);
+  if (0 != m_sequencer->fishInMotion())
+  {
+    // write current angle back into the fish object
+    m_sequencer->fishInMotion()->setAngle(m_angle);
+  }
 }
 
 void VelocityControl::doAngleControl()

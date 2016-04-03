@@ -136,6 +136,11 @@ void FishCollection::activateFish(unsigned int fishHwId)
   }
 }
 
+void FishCollection::stopFish()
+{
+  m_sequencer->stop();
+}
+
 Fish* FishCollection::findFishByHwId(unsigned int fishHwId)
 {
   Fish* matchingFish = 0;

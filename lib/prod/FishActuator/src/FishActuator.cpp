@@ -126,6 +126,15 @@ void FishActuator::activateFish(unsigned int fishHwId)
   }
 }
 
+void FishActuator::stopFish()
+{
+  if (0 != m_fishCollection)
+  {
+    m_fishCollection->stopFish();
+  }
+}
+
+
 DbgCli_Topic* FishActuator::dbgCliTopic()
 {
   return m_dbgCliTopic;

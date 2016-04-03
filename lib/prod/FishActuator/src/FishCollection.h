@@ -27,6 +27,7 @@ public:
   void delFishAtHwId(unsigned int fishHwId);
 
   void activateFish(unsigned int fishHwId);
+  void stopFish();
 
 //  unsigned long activeTimeMillis();
 //  unsigned long restTimeMillis();

@@ -30,7 +30,10 @@ public:
     m_sequencer->velocityControl()->goToTargetAngle(angle, velocity);
   }
 
-  void stopAction() { }
+  void stopAction()
+  {
+    m_sequencer->velocityControl()->stop();
+  }
 
 private: // forbidden default functions
   MyCmdSeqAdapter();
@@ -92,7 +95,7 @@ MotionSequencer::~MotionSequencer()
 
 void MotionSequencer::prepareSequence()
 {
-  int velocity = 2;
+  int velocity = 5;
   unsigned long pauseTimeMillis = 500;
   new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis, -90, velocity);
   new CmdStop(m_sequence, pauseTimeMillis);
@@ -115,6 +118,11 @@ void MotionSequencer::startSequence(Fish* fishInMotion)
 {
   m_fishInMotion = fishInMotion;
   m_sequence->start();
+}
+
+void MotionSequencer::stop()
+{
+  m_sequence->stop();
 }
 
 Fish* MotionSequencer::fishInMotion()

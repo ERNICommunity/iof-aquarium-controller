@@ -98,6 +98,11 @@ public:
    */
   void activateFish(unsigned int fishHwId);
 
+  /**
+   * Emergency Stop: all Fish motion gets stoped immediately.
+   */
+  void stopFish();
+
   DbgCli_Topic* dbgCliTopic();
 
 private:
