@@ -85,7 +85,11 @@ public:
       m_fishActuator->activateFish(m_hwId);
 //    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
     }
-
+    if (0 < (currentTouchValue & 1<<7))
+    {
+      m_fishActuator->stopFish();
+    }
+  }
 };
 
 //-----------------------------------------------------------------------------
