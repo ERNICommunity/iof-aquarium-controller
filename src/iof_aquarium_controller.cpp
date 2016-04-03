@@ -39,7 +39,7 @@ FishActuator* fishActuator;
 #define SCL_PIN 5
 
 //-----------------------------------------------------------------------------
-//
+// Fish Event & Error Notification Adapter
 //-----------------------------------------------------------------------------
 class TestFishNotificationAdapter: public FishNotificationAdapter
 {
@@ -63,7 +63,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-//
+// Sensor Action Adapter
 //-----------------------------------------------------------------------------
 class MyCapSensorAdatper: public CapSensorAdapter
 {
@@ -76,47 +76,17 @@ public:
   , m_hwId(hwId)
   { }
 
-  virtual void notifyCapTouched()
+  virtual void notifyCapTouched(uint8_t currentTouchValue)
   {
-    // now it is time to do something
-    Serial.println("Touch down!");
-    m_fishActuator->activateFish(m_hwId);
+    if (0 < (currentTouchValue & 1<<0))
+    {
+      // now it is time to do something
+      Serial.println("Touch down!");
+      m_fishActuator->activateFish(m_hwId);
 //    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
-  }
+    }
 
 };
-
-////-----------------------------------------------------------------------------
-//// Debugging
-////-----------------------------------------------------------------------------
-//class DbgCli_Command_AddFish : public DbgCli_Command
-//{
-//private:
-//  FishActuator* m_fishActuator;
-//public:
-//  DbgCli_Command_AddFish(FishActuator* fishActuator)
-//  : DbgCli_Command(new DbgCli_Topic(DbgCli_Node::RootNode(), "fish", "Fish test commands"), "add", "Add Fish; .")
-//  , m_fishActuator(fishActuator)
-//  { }
-//
-//  void printUsage()
-//  {
-//    Serial.println("dbg fish add - usage: {0..15}");
-//  }
-//
-//  void execute(unsigned int argc, const char** args, unsigned int idxToFirstArgToHandle)
-//  {
-//    if (argc < 4)
-//    {
-//      printUsage();
-//    }
-//    else
-//    {
-//      unsigned int hwId = atoi(args[idxToFirstArgToHandle]);
-//      m_fishActuator->addFishAtHwId(hwId);
-//    }
-//  }
-//};
 
 //-----------------------------------------------------------------------------
 // Arduino Cmd I/F
@@ -135,6 +105,9 @@ void hello(int arg_cnt, char **args)
   Serial.println("Hello world.");
 }
 
+//-----------------------------------------------------------------------------
+// MQTT Client subscriber callback
+//-----------------------------------------------------------------------------
 void callback(char* topic, byte* payload, unsigned int length)
 {
   unsigned int fishId = 0;
@@ -169,6 +142,7 @@ void callback(char* topic, byte* payload, unsigned int length)
   Serial.println();
 }
 
+//
 void setup_wifi()
 {
 
@@ -205,7 +179,7 @@ void setup()
   Serial.println(F("---------------------------------------------"));
   Serial.println();
 
-  setup_wifi();
+//  setup_wifi();
 
 //  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
 //  client.setCallback(callback);
@@ -224,13 +198,12 @@ void setup()
   // Debug Cli
   //---------------------------------------------------------------------------
   // adding CLI Commands
-  cmdAdd("hello", hello);
-  cmdAdd("dbg", dbgCliExecute);
+  cmdAdd("hello", hello);        // Tsst dummy
+  cmdAdd("dbg", dbgCliExecute);  // DbgCli integration
 
   //---------------------------------------------------------------------------
   // Debug Trace
   //---------------------------------------------------------------------------
-
 //  DbgCli_Topic* traceTopic = new DbgCli_Topic(DbgCli_Node::RootNode(), "tr", "Modify debug trace");
 //  DbgTrace_Context* traceContext = new DbgTrace_Context(traceTopic);
 //  new DbgTrace_Out(DbgTrace_Context::getContext(), "trConOut", new DbgPrint_Console());

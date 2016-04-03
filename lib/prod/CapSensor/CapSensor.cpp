@@ -11,12 +11,12 @@ class MyDebounceTimerAdatper : public TimerAdapter
 {
 private:
   CapSensor* m_capSensor;
-  bool m_lastTouchValue;
+  uint8_t m_lastTouchValue;
   
 public:
   MyDebounceTimerAdatper(CapSensor* capSensor)
   : m_capSensor(capSensor)
-  , m_lastTouchValue(false)
+  , m_lastTouchValue(0)
   { }
   
   void timeExpired()
@@ -24,14 +24,10 @@ public:
     if (0 != m_capSensor)
     {
       uint8_t currentTouchValue = m_capSensor->wasTouched();
-      
       if (m_lastTouchValue != currentTouchValue)
       {
         m_lastTouchValue = currentTouchValue;
-        if (currentTouchValue)
-        {
-          m_capSensor->notifyTouched();
-        }
+        m_capSensor->notifyTouched(currentTouchValue);
       } 
     }
   }
@@ -50,8 +46,7 @@ CapSensor::CapSensor(CapSensorAdapter* adapter)
      Serial.println("CAP1188 not found");
      while (1);
    }
-
-   m_adaCap->writeRegister(0x1F, 0x4F);
+   m_adaCap->writeRegister(0x1F, 0x2F);
 }
 
 CapSensor::~CapSensor()
@@ -71,20 +66,20 @@ void CapSensor::attachAdapter(CapSensorAdapter* adapter)
   m_adapter = adapter;
 }
 
-bool CapSensor::wasTouched()
+uint8_t CapSensor::wasTouched()
 {
-  if(NULL != m_adaCap)
+  uint8_t touched = 0;
+  if(0 != m_adaCap)
   {
-    return (m_adaCap->touched() > 0);
+    touched = m_adaCap->touched();
   }
-
-  return false;
+  return touched;
 }
 
-void CapSensor::notifyTouched()
+void CapSensor::notifyTouched(uint8_t currentTouchValue)
 {
-  if(NULL != m_adapter)
+  if(0 != m_adapter)
   {
-    m_adapter->notifyCapTouched();
+    m_adapter->notifyCapTouched(currentTouchValue);
   }
 }

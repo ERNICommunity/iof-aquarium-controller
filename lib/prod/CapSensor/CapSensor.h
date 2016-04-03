@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 class Timer;
 class Adafruit_CAP1188;
 
@@ -14,8 +16,9 @@ public:
   /**
    * Notification method to be implemented by specific adapter.
    * Called whenever one of the 8 touch capacitors is touched
+   * @param Current status, bit set, each bit represents one CAP sense input pin, active (true) or inactive (false).
    */
-  virtual void notifyCapTouched(void) = 0;
+  virtual void notifyCapTouched(uint8_t currentTouchValue) = 0;
 
 protected:
   CapSensorAdapter() { }
@@ -53,12 +56,11 @@ public:
 
   /**
    * Retrieve current status.
-   * @return  Current status: active (true) or inactive (false).
+   * @return  Current status, bit set, each bit represents one CAP sense input pin, active (true) or inactive (false).
    */
-  bool wasTouched();
+  uint8_t wasTouched();
 
-  void notifyTouched();
-
+  void notifyTouched(uint8_t currentTouchValue);
   
 private:
   Timer* m_debounceTimer;
