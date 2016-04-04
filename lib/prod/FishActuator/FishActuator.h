@@ -66,8 +66,9 @@ class FishActuator
 public:
   /**
    * Constructor.
+   * @param adapter Specific Fish Notification Adapter (optional)
    */
-  FishActuator();
+  FishActuator(FishNotificationAdapter* adapter = 0);
 
   /**
    * Destructor.
@@ -76,7 +77,7 @@ public:
 
   /**
    * Attach specific Fish event and error notification adapter object.
-   * @param errorNotifier Specific error notifier
+   * @param adapter Specific Fish Notification Adapter
    */
   void attachAdapter(FishNotificationAdapter* adapter);
 
@@ -99,10 +100,14 @@ public:
   void activateFish(unsigned int fishHwId);
 
   /**
-   * Emergency Stop: all Fish motion gets stoped immediately.
+   * Emergency Stop: all Fish motion gets stopped immediately.
    */
   void stopFish();
 
+  /**
+   * Get Debug CLI Topic object.
+   * @return dbgCliTopic Pointer to the Debug CLI Topic object.
+   */
   DbgCli_Topic* dbgCliTopic();
 
 private:

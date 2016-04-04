@@ -191,8 +191,7 @@ void setup()
   //---------------------------------------------------------------------------
   // Fish Actuator
   //---------------------------------------------------------------------------
-  fishActuator = new FishActuator();
-  fishActuator->attachAdapter(new TestFishNotificationAdapter());
+  fishActuator = new FishActuator(new TestFishNotificationAdapter());
   fishActuator->addFishAtHwId(0);
   fishActuator->addFishAtHwId(1);
   fishActuator->addFishAtHwId(2);

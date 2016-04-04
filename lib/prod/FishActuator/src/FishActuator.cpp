@@ -77,8 +77,8 @@ public:
 
 //-----------------------------------------------------------------------------
 
-FishActuator::FishActuator()
-: m_fishCollection(new FishCollection())
+FishActuator::FishActuator(FishNotificationAdapter* adapter)
+: m_fishCollection(new FishCollection(adapter))
 , m_dbgCliTopic(new DbgCli_Topic(DbgCli_Node::RootNode(), "fish", "Fish test commands."))
 {
   new DbgCli_Command_AddFish(this, m_dbgCliTopic);

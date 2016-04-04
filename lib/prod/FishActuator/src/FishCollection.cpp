@@ -13,8 +13,8 @@
 
 //#include "Arduino.h"
 
-FishCollection::FishCollection()
-: m_adapter(0)
+FishCollection::FishCollection(FishNotificationAdapter* adapter)
+: m_adapter(adapter)
 , m_fish(0)
 , m_hal(new FishHal())
 , m_sequencer(new MotionSequencer(this))

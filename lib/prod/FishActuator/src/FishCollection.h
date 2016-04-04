@@ -17,7 +17,7 @@ class FishCollection
 {
   friend Fish;
 public:
-  FishCollection();
+  FishCollection(FishNotificationAdapter* adapter = 0);
   virtual ~FishCollection();
 
   void attachAdapter(FishNotificationAdapter* adapter);
