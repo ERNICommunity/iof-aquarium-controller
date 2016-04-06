@@ -8,10 +8,12 @@
 #ifndef PROD_FISHACTUATOR_SRC_FISHCOLLECTION_H_
 #define PROD_FISHACTUATOR_SRC_FISHCOLLECTION_H_
 
+class Timer;
 class FishNotificationAdapter;
 class Fish;
 class FishHal;
 class MotionSequencer;
+class FishActivationQueue;
 
 class FishCollection
 {
@@ -29,9 +31,6 @@ public:
   void activateFish(unsigned int fishHwId);
   void stopFish();
 
-//  unsigned long activeTimeMillis();
-//  unsigned long restTimeMillis();
-
   /**
    * Get the Fish object pointer of the Fish object having the provided HW ID.
    * @param fishHwId Fish Hardware Id {0..n-1}
@@ -43,7 +42,8 @@ public:
 
   MotionSequencer* motionSequencer();
 
-public:
+  FishActivationQueue* queue();
+
   /**
    * Get busy state of the Fish Collection.
    * @return isBusy true: A Fish is in action; false: none of the Fish are moving.
@@ -52,12 +52,14 @@ public:
 
 private:
   FishNotificationAdapter* m_adapter;
-  Fish* m_fish;                         /// Root node of single linked list containing the configured Fish objects.
+  FishActivationQueue* m_queue;
+  Timer* m_queueProcessingTimer;
   FishHal* m_hal;
   MotionSequencer* m_sequencer;
-  unsigned long m_activeTimeMillis;     /// Time period for timer running during fish motion activity.
-  unsigned long m_restTimeMillis;       /// Time period for timer running during fish rest time after the motion activity has been finished.
+  Fish* m_fish;                         /// Root node of single linked list containing the configured Fish objects.
   bool m_isBusy;                        /// Busy state of the Fish Collection: true: A Fish is in action; false: none of the Fish is moving.
+
+  static const unsigned long s_queueProcessingIntervalMillis;
 
 
 private:  // forbidden functions

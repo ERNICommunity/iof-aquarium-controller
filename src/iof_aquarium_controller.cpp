@@ -84,8 +84,7 @@ public:
     {
       // now it is time to do something
       Serial.println("Touch down!");
-//      m_fishActuator->activateFish(m_hwId);
-    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
+      client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
     }
     if (0 < (currentTouchValue & 1<<7))
     {

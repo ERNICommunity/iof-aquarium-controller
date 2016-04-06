@@ -33,6 +33,8 @@ public:
   typedef enum
   {
     ErrFishNotFound,
+    ErrFishQueueFull,
+    ErrFishQueueCorrupt,
     ErrFishAlreadyExists,
     ErrFishBusy
   } FishError;

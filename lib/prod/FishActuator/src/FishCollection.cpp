@@ -10,16 +10,52 @@
 #include "Fish.h"
 #include "FishHal.h"
 #include "MotionSequencer.h"
+#include <FishActivationQueue.h>
+#include <Timer.h>
 
-//#include "Arduino.h"
+//-----------------------------------------------------------------------------
+
+class QueueProcessingTimerAdapter : public TimerAdapter
+{
+private:
+  FishCollection* m_fishCollection;
+
+public:
+  QueueProcessingTimerAdapter(FishCollection* fishCollection)
+  : m_fishCollection(fishCollection)
+  { }
+
+  void timeExpired()
+  {
+    if (!m_fishCollection->queue()->isEmpty() && !m_fishCollection->isBusy())
+    {
+      Fish* fish = m_fishCollection->queue()->dequeue();
+      if (0 != fish)
+      {
+        fish->activateMotion();
+      }
+      else
+      {
+        if (0 != m_fishCollection->adapter())
+        {
+          m_fishCollection->adapter()->notifyFishError(0, FishNotificationAdapter::ErrFishQueueCorrupt);
+        }
+      }
+    }
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+const unsigned long FishCollection::s_queueProcessingIntervalMillis = 1000;
 
 FishCollection::FishCollection(FishNotificationAdapter* adapter)
 : m_adapter(adapter)
-, m_fish(0)
+, m_queue(new FishActivationQueue())
+, m_queueProcessingTimer(new Timer(new QueueProcessingTimerAdapter(this), Timer::IS_RECURRING, s_queueProcessingIntervalMillis))
 , m_hal(new FishHal())
 , m_sequencer(new MotionSequencer(this))
-, m_activeTimeMillis(5000)
-, m_restTimeMillis(2000)
+, m_fish(0)
 , m_isBusy(false)
 { }
 
@@ -30,6 +66,15 @@ FishCollection::~FishCollection()
 
   delete m_hal;
   m_hal = 0;
+
+  delete m_queueProcessingTimer->adapter();
+  m_queueProcessingTimer->attachAdapter(0);
+
+  delete m_queueProcessingTimer;
+  m_queueProcessingTimer = 0;
+
+  delete m_queue;
+  m_queue = 0;
 }
 
 void FishCollection::attachAdapter(FishNotificationAdapter* adapter)
@@ -42,20 +87,8 @@ FishNotificationAdapter* FishCollection::adapter()
   return m_adapter;
 }
 
-//unsigned long FishCollection::activeTimeMillis()
-//{
-//  return m_activeTimeMillis;
-//}
-//
-//unsigned long FishCollection::restTimeMillis()
-//{
-//  return m_restTimeMillis;
-//}
-
 void FishCollection::addFishAtHwId(unsigned int fishHwId)
 {
-//  Serial.printf("FishCollection::addFishAtHwId(): Add Fish with HW ID=%d\n", fishHwId);
-
   bool found = (findFishByHwId(fishHwId) != 0);
 
   if (! found)
@@ -124,7 +157,18 @@ void FishCollection::activateFish(unsigned int fishHwId)
   Fish* fish = findFishByHwId(fishHwId);
   if (0 != fish)
   {
-    fish->activateMotion();
+    if (!m_queue->isFull())
+    {
+      m_queue->enqueue(fish);
+    }
+    else
+    {
+      if (0 != m_adapter)
+      {
+        // ERROR: Fish with the particular HW ID not found, nothing activated!
+        m_adapter->notifyFishError(fishHwId, FishNotificationAdapter::ErrFishQueueFull);
+      }
+    }
   }
   else
   {
@@ -179,4 +223,9 @@ FishHal* FishCollection::hal()
 MotionSequencer* FishCollection::motionSequencer()
 {
   return m_sequencer;
+}
+
+FishActivationQueue* FishCollection::queue()
+{
+  return m_queue;
 }
