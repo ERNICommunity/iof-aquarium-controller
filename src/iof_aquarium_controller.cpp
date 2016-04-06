@@ -26,7 +26,7 @@
 #define AQUARIUM_ID     "1001"
 #define AQUARIUM_SENSOR "sensor/aquarium-trigger"
 
-#define MY_FISH_ID "3"
+#define MY_FISH_ID "1"
 
 //const char* AQUARIUM_PUB_FEED = "iof/" + OFFICE_COUNTRY + "/" + OFFICE_NAME + "/" + AQUARIUM_ID + "/" + AQUARIUM_SENSOR; //TODO: not working
 //const char* AQUARIUM_SUB_FEED = "iof/+/+/+/" + AQUARIUM_SENSOR;
@@ -56,9 +56,11 @@ public:
   void notifyFishError(unsigned int fishHwId, FishError error)
   {
     Serial.printf("notifyFishError(), fishHwId=%d, error=%s\n", fishHwId,
-        error == FishNotificationAdapter::ErrFishAlreadyExists ? "FishAlreadyExists" :
-        error == FishNotificationAdapter::ErrFishBusy          ? "FishBusy         " :
-        error == FishNotificationAdapter::ErrFishNotFound      ? "FishNotFound     " : "UNKNOWN");
+        error == FishNotificationAdapter::ErrFishQueueFull     ? "ErrFishQueueFull   " :
+        error == FishNotificationAdapter::ErrFishQueueCorrupt  ? "ErrFishQueueCorrupt" :
+        error == FishNotificationAdapter::ErrFishAlreadyExists ? "FishAlreadyExists  " :
+        error == FishNotificationAdapter::ErrFishBusy          ? "FishBusy           " :
+        error == FishNotificationAdapter::ErrFishNotFound      ? "FishNotFound       " : "UNKNOWN");
   }
 };
 
@@ -82,8 +84,8 @@ public:
     {
       // now it is time to do something
       Serial.println("Touch down!");
-      m_fishActuator->activateFish(m_hwId);
-//    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
+//      m_fishActuator->activateFish(m_hwId);
+    client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
     }
     if (0 < (currentTouchValue & 1<<7))
     {
@@ -183,10 +185,10 @@ void setup()
   Serial.println(F("---------------------------------------------"));
   Serial.println();
 
-//  setup_wifi();
+  setup_wifi();
 
-//  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
-//  client.setCallback(callback);
+  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
+  client.setCallback(callback);
 
   //---------------------------------------------------------------------------
   // Fish Actuator
@@ -215,7 +217,7 @@ void setup()
 void subscribe()
 {
   //client.subscribe("iof/ch/berne/sensor/aquarium-trigger");
-//  client.subscribe("iof/#");
+  client.subscribe("iof/#");
 }
 
 void reconnect()
@@ -230,6 +232,7 @@ void reconnect()
       Serial.println(F("connected"));
       // resubscribe
       subscribe();
+      delay(500);
     }
     else
     {
@@ -237,7 +240,7 @@ void reconnect()
       Serial.print(client.state());
       Serial.println(F(" try again in 5 seconds"));
       // Wait 3 seconds before retrying
-      delay(3000);
+      delay(5000);
     }
   }
 }
@@ -245,12 +248,13 @@ void reconnect()
 // The loop function is called in an endless loop
 void loop()
 {
-//  if (!client.connected())
-//  {
-//    reconnect();
-//  }
+  if (!client.connected())
+  {
+    reconnect();
+    delay(100);
+  }
 
   yield();
-//  client.loop(); //must be called regularly
+  client.loop(); //must be called regularly
   cmdPoll();
 }
