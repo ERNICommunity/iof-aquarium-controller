@@ -17,7 +17,7 @@
 
 #define WIFI_SSID       "IoTAP"
 #define WIFI_PWD        "12345678"
-#define MQTT_SERVER_IP  "192.168.43.53"
+#define MQTT_SERVER_IP  "iot.eclipse.org"
 #define MQTT_PORT       1883
 
 #define OFFICE_COUNTRY  "ch"
@@ -169,6 +169,8 @@ void setup_wifi()
   Serial.println(F("WiFi connected"));
   Serial.println(F("IP address: "));
   Serial.println(WiFi.localIP());
+  Serial.println(F("MAC address: "));
+  Serial.println(WiFi.macAddress());
 }
 
 //The setup function is called once at startup of the sketch
