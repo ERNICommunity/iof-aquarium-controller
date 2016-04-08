@@ -61,18 +61,6 @@ public:
    */
   Timer* restPeriodTimer();
 
-  /**
-   * Get busy state of the Fish object.
-   * @return isBusy true: the Fish is in action; false: the Fish is not moving.
-   */
-  bool isBusy();
-
-  /**
-   * Get ready state of the Fish object.
-   * @return isReady true: the Fish is ready to be triggered; false: the Fish is in action or is waiting for the rest period time to expire.
-   */
-  bool isReady();
-
 protected:
   /**
    * Get next Fish object pointer out of the linked list containing Fish objects.
