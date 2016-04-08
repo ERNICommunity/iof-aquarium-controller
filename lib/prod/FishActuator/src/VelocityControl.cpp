@@ -74,10 +74,6 @@ void VelocityControl::stop()
 
   if (0 != m_sequencer->fishInMotion())
   {
-//    if (0 != m_sequencer->collection()->adapter())
-//    {
-//      m_sequencer->collection()->adapter()->notifyFishEvent(m_sequencer->fishInMotion()->getFishHwId(), FishNotificationAdapter::EvtFishStopped);
-//    }
     // write current angle back into the fish object
     m_sequencer->fishInMotion()->setAngle(m_angle);
   }
