@@ -84,6 +84,13 @@ public:
   void attachAdapter(FishNotificationAdapter* adapter);
 
   /**
+   * Check if a particular Fish is configured or not.
+   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @return isFishConfigured true: Fish is configured, false: Fish is not configured.
+   */
+  bool isFishConfigured(unsigned int fishHwId);
+
+  /**
    * Add a new Fish to HW port specified by a particular Fish Hardware Id.
    * @param fishHwId Fish Hardware Id {0..n-1}
    */

@@ -87,11 +87,16 @@ FishNotificationAdapter* FishCollection::adapter()
   return m_adapter;
 }
 
+bool FishCollection::isFishConfigured(unsigned int fishHwId)
+{
+  return (findFishByHwId(fishHwId) != 0);
+}
+
 void FishCollection::addFishAtHwId(unsigned int fishHwId)
 {
-  bool found = (findFishByHwId(fishHwId) != 0);
+  bool found = isFishConfigured(fishHwId);
 
-  if (! found)
+  if (!found)
   {
     Fish* fish = new Fish(fishHwId, this);
     if (0 == m_fish)
@@ -112,7 +117,7 @@ void FishCollection::addFishAtHwId(unsigned int fishHwId)
   {
     if (0 != m_adapter)
     {
-      // ERROR: Fish with the particular WH ID already exists, no new fish created!
+      // ERROR: Fish with the particular HW ID already exists, no new fish created!
       m_adapter->notifyFishError(fishHwId, FishNotificationAdapter::ErrFishAlreadyExists);
     }
   }

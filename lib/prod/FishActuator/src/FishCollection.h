@@ -25,6 +25,8 @@ public:
   void attachAdapter(FishNotificationAdapter* adapter);
   FishNotificationAdapter* adapter();
 
+  bool isFishConfigured(unsigned int fishHwId);
+
   void addFishAtHwId(unsigned int fishHwId);
   void delFishAtHwId(unsigned int fishHwId);
 

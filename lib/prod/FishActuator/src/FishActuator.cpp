@@ -101,11 +101,20 @@ void FishActuator::attachAdapter(FishNotificationAdapter* adapter)
   }
 }
 
+bool FishActuator::isFishConfigured(unsigned int fishHwId)
+{
+  bool isConfigured = false;
+  if (0 != m_fishCollection)
+  {
+    isConfigured = m_fishCollection->isFishConfigured(fishHwId);
+  }
+  return isConfigured;
+}
+
 void FishActuator::addFishAtHwId(unsigned int fishHwId)
 {
   if (0 != m_fishCollection)
   {
-//    Serial.printf("FishActuator::addFishAtHwId(): Add Fish with HW ID=%d\n", fishHwId);
     m_fishCollection->addFishAtHwId(fishHwId);
   }
 }
