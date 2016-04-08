@@ -12,8 +12,6 @@
 #include <DbgCliNode.h>
 #include <DbgCliTopic.h>
 
-//  : DbgCli_Command(new DbgCli_Topic(DbgCli_Node::RootNode(), "fish", "Fish test commands"), "add", "Add Fish; .")
-
 class HalDbgCmd_Angle : public DbgCli_Command
 {
 public:
