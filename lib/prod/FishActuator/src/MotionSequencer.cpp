@@ -11,6 +11,7 @@
 #include <FishCollection.h>
 #include <FishHal.h>
 #include <Fish.h>
+#include <FishActuator.h>
 #include <VelocityControl.h>
 
 //-----------------------------------------------------------------------------
@@ -122,6 +123,13 @@ void MotionSequencer::startSequence(Fish* fishInMotion)
 
 void MotionSequencer::stop()
 {
+  if (0 != m_collection->adapter())
+  {
+    if (0 != m_fishInMotion)
+    {
+      m_collection->adapter()->notifyFishEvent(m_fishInMotion->getFishHwId(), FishNotificationAdapter::EvtFishStopped);
+    }
+  }
   m_sequence->stop();
 }
 
