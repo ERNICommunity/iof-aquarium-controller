@@ -3,9 +3,9 @@
 
 #include <Wire.h>
 #include <CapSensor.h>
-#include <ESP8266WiFi.h>
 #include <Timer.h>
 #include <TimerContext.h>
+#include <IoF_WiFiClient.h>
 #include <PubSubClient.h>
 #include <FishActuator.h>
 
@@ -23,11 +23,8 @@
 
 #define MY_FISH_ID "1"
 
-//const char* AQUARIUM_PUB_FEED = "iof/" + OFFICE_COUNTRY + "/" + OFFICE_NAME + "/" + AQUARIUM_ID + "/" + AQUARIUM_SENSOR; //TODO: not working
-//const char* AQUARIUM_SUB_FEED = "iof/+/+/+/" + AQUARIUM_SENSOR;
-
-WiFiClient espClient;
-PubSubClient client(espClient);
+IoF_WiFiClient* wifiClient = 0;
+PubSubClient* mqttClient = 0;
 FishActuator* fishActuator = 0;
 
 #define SDA_PIN 4
@@ -60,36 +57,21 @@ const unsigned long c_wiFiConnectIntervalMillis = 1000;
 class WiFiConnectTimerAdapter : public TimerAdapter
 {
 private:
-  wl_status_t m_wlStatus;
+
 public:
   WiFiConnectTimerAdapter()
-  : m_wlStatus(WL_NO_SHIELD)
   { }
 
   void timeExpired()
   {
-    wl_status_t wlStatus = WiFi.status();
-    if (wlStatus != m_wlStatus)
-    {
-      m_wlStatus = wlStatus;
-      Serial.print("WiFi - SSID: ");
-      Serial.print(WIFI_SSID);
-      Serial.print(" - Status: ");
-      Serial.println(m_wlStatus == WL_NO_SHIELD       ? "NO_SHIELD      " :
-                     m_wlStatus == WL_IDLE_STATUS     ? "IDLE_STATUS    " :
-                     m_wlStatus == WL_NO_SSID_AVAIL   ? "NO_SSID_AVAIL  " :
-                     m_wlStatus == WL_SCAN_COMPLETED  ? "SCAN_COMPLETED " :
-                     m_wlStatus == WL_CONNECTED       ? "CONNECTED      " :
-                     m_wlStatus == WL_CONNECT_FAILED  ? "CONNECT_FAILED " :
-                     m_wlStatus == WL_CONNECTION_LOST ? "CONNECTION_LOST" :
-                     m_wlStatus == WL_DISCONNECTED    ? "DISCONNECTED   " : "UNKNOWN");
-    }
 
-    if ((WL_CONNECTED == WiFi.status()) && (!client.connected()))
+    //report wifi change
+
+    if ((WL_CONNECTED == WiFi.status()) && (!mqttClient->connected()))
     {
       Serial.print("Attempting MQTT connection... ");
       // Attempt to connect
-      if (client.connect("iofiof-1"))
+      if (mqttClient->connect("iofiof-1"))
       {
         Serial.println("connected");
         delay(5000);
@@ -98,7 +80,7 @@ public:
       }
       else
       {
-        int state = client.state();
+        int state = mqttClient->state();
         Serial.print("failed, state: ");
         Serial.print(state == MQTT_CONNECTION_TIMEOUT      ? "CONNECTION_TIMEOUT"      :
                      state == MQTT_CONNECTION_LOST         ? "CONNECTION_LOST"         :
@@ -164,7 +146,7 @@ public:
     {
       // now it is time to do something
       Serial.println("Touch down!");
-      client.publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
+      mqttClient->publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
     }
     if (0 != (currentTouchValue & 1<<7))
     {
@@ -246,18 +228,18 @@ void setup()
   //-----------------------------------------------------------------------------
   // WiFi Connection
   //-----------------------------------------------------------------------------
-  WiFi.begin(WIFI_SSID, WIFI_PWD);
-  new Timer(new WiFiConnectTimerAdapter(), Timer::IS_RECURRING, c_wiFiConnectIntervalMillis);
-
+  wifiClient = new IoF_WiFiClient(WIFI_SSID, WIFI_PWD, c_wiFiConnectIntervalMillis);
+  wifiClient->begin();
   //-----------------------------------------------------------------------------
   // MQTT Client
   //-----------------------------------------------------------------------------
-  while (WL_CONNECTED != WiFi.status())
+  mqttClient = new PubSubClient(*(wifiClient->getClient()));
+  while (WL_CONNECTED != wifiClient->getStatus())
   {
     delay(200);
   }
-  client.setServer(MQTT_SERVER_IP, MQTT_PORT);
-  client.setCallback(callback);
+  mqttClient->setServer(MQTT_SERVER_IP, MQTT_PORT);
+  mqttClient->setCallback(callback);
 
   //---------------------------------------------------------------------------
   // Fish Actuator
@@ -273,12 +255,12 @@ void setup()
 void subscribe()
 {
   //client.subscribe("iof/ch/berne/sensor/aquarium-trigger");
-  client.subscribe("iof/#");
+  mqttClient->subscribe("iof/#");
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
-  client.loop();
+  mqttClient->loop();
   yield();
 }
