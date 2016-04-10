@@ -17,7 +17,7 @@ class Timer;
 class IoF_WiFiClient
 {
 public:
-  IoF_WiFiClient(char* wifi_ssid, char* wifi_pw, unsigned long connectInterval_ms);
+  IoF_WiFiClient(char* wifi_ssid, char* wifi_pw);
   virtual ~IoF_WiFiClient();
 
   void begin();
@@ -27,10 +27,10 @@ public:
 
 private:
   Timer* m_wifiConnectTimer;
+  WiFiClient* m_client;
   char* m_WiFi_ssid;
   char* m_WiFi_pw;
-  unsigned long m_connectInterval_ms;
-  WiFiClient* m_client;
+  static const unsigned long s_connectInterval_ms;
 
 private:  // forbidden functions
   IoF_WiFiClient(const IoF_WiFiClient& src);              // copy constructor

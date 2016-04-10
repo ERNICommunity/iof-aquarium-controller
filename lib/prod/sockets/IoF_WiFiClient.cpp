@@ -5,10 +5,13 @@
  *      Author: scan
  */
 
-#include <iof_WiFiClient.h>
-
+#include <HardwareSerial.h>
+#include <include/wl_definitions.h>
+#include <IoF_WiFiClient.h>
 #include <Timer.h>
 
+
+const unsigned long IoF_WiFiClient::s_connectInterval_ms = 1000;
 
 //-----------------------------------------------------------------------------
 // WiFi Connect Timer Adapter
@@ -28,22 +31,23 @@ public:
 
   void timeExpired()
   {
-    m_wifiClient->printWiFiStatusChanged(m_wlStatus);
+    if (0 != m_wifiClient)
+    {
+      m_wifiClient->printWiFiStatusChanged(m_wlStatus);
+    }
   }
 };
-
 
 
 //-----------------------------------------------------------------------------
 // IoF WiFi Client
 //-----------------------------------------------------------------------------
 
-IoF_WiFiClient::IoF_WiFiClient(char* wifi_ssid, char* wifi_pw, unsigned long connectInterval_ms)
+IoF_WiFiClient::IoF_WiFiClient(char* wifi_ssid, char* wifi_pw)
 : m_wifiConnectTimer(0)
+, m_client(new WiFiClient())
 , m_WiFi_ssid(wifi_ssid)
 , m_WiFi_pw(wifi_pw)
-, m_connectInterval_ms(connectInterval_ms)
-, m_client(new WiFiClient())
 { }
 
 IoF_WiFiClient::~IoF_WiFiClient()
@@ -62,7 +66,7 @@ wl_status_t IoF_WiFiClient::getStatus()
 void IoF_WiFiClient::begin()
 {
   WiFi.begin(m_WiFi_ssid, m_WiFi_pw);
-  m_wifiConnectTimer = new Timer(new MyWifiConnectTimerAdapter(this), Timer::IS_RECURRING, m_connectInterval_ms);
+  m_wifiConnectTimer = new Timer(new MyWifiConnectTimerAdapter(this), Timer::IS_RECURRING, s_connectInterval_ms);
 }
 
 void IoF_WiFiClient::printWiFiStatusChanged(wl_status_t& old_wlStatus)

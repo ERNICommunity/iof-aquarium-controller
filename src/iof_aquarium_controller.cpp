@@ -6,7 +6,7 @@
 #include <Timer.h>
 #include <TimerContext.h>
 #include <IoF_WiFiClient.h>
-#include <PubSubClient.h>
+#include <MqttClient.h>
 #include <FishActuator.h>
 
 // Update these with values suitable for your network.
@@ -24,7 +24,7 @@
 #define MY_FISH_ID "1"
 
 IoF_WiFiClient* wifiClient = 0;
-PubSubClient* mqttClient = 0;
+MqttClient* mqttClient = 0;
 FishActuator* fishActuator = 0;
 
 #define SDA_PIN 4
@@ -46,57 +46,6 @@ public:
     Serial.print(millis() / 1000);
     Serial.print(" - Free Heap Size: ");
     Serial.println(system_get_free_heap_size());
-  }
-};
-
-//-----------------------------------------------------------------------------
-// WiFi Connection Handler
-//-----------------------------------------------------------------------------
-void subscribe();
-const unsigned long c_wiFiConnectIntervalMillis = 1000;
-class WiFiConnectTimerAdapter : public TimerAdapter
-{
-private:
-
-public:
-  WiFiConnectTimerAdapter()
-  { }
-
-  void timeExpired()
-  {
-
-    //report wifi change
-
-    if ((WL_CONNECTED == WiFi.status()) && (!mqttClient->connected()))
-    {
-      Serial.print("Attempting MQTT connection... ");
-      // Attempt to connect
-      if (mqttClient->connect("iofiof-1"))
-      {
-        Serial.println("connected");
-        delay(5000);
-        // resubscribe
-        subscribe();
-      }
-      else
-      {
-        int state = mqttClient->state();
-        Serial.print("failed, state: ");
-        Serial.print(state == MQTT_CONNECTION_TIMEOUT      ? "CONNECTION_TIMEOUT"      :
-                     state == MQTT_CONNECTION_LOST         ? "CONNECTION_LOST"         :
-                     state == MQTT_CONNECT_FAILED          ? "CONNECT_FAILED"          :
-                     state == MQTT_DISCONNECTED            ? "DISCONNECTED"            :
-                     state == MQTT_CONNECTED               ? "CONNECTED"               :
-                     state == MQTT_CONNECT_BAD_PROTOCOL    ? "CONNECT_BAD_PROTOCOL"    :
-                     state == MQTT_CONNECT_BAD_CLIENT_ID   ? "CONNECT_BAD_CLIENT_ID"   :
-                     state == MQTT_CONNECT_UNAVAILABLE     ? "CONNECT_UNAVAILABLE"     :
-                     state == MQTT_CONNECT_BAD_CREDENTIALS ? "CONNECT_BAD_CREDENTIALS" :
-                     state == MQTT_CONNECT_UNAUTHORIZED    ? "CONNECT_UNAUTHORIZED"    : "UNKNOWN");
-        Serial.print(", will try again in ");
-        Serial.print(c_wiFiConnectIntervalMillis / 1000);
-        Serial.println(" second(s)");
-      }
-    }
   }
 };
 
@@ -146,7 +95,7 @@ public:
     {
       // now it is time to do something
       Serial.println("Touch down!");
-      mqttClient->publish("iof/ch/berne/sensor/aquarium-trigger", MY_FISH_ID);
+      mqttClient->publishCapTouched();
     }
     if (0 != (currentTouchValue & 1<<7))
     {
@@ -228,18 +177,8 @@ void setup()
   //-----------------------------------------------------------------------------
   // WiFi Connection
   //-----------------------------------------------------------------------------
-  wifiClient = new IoF_WiFiClient(WIFI_SSID, WIFI_PWD, c_wiFiConnectIntervalMillis);
+  wifiClient = new IoF_WiFiClient(WIFI_SSID, WIFI_PWD);
   wifiClient->begin();
-  //-----------------------------------------------------------------------------
-  // MQTT Client
-  //-----------------------------------------------------------------------------
-  mqttClient = new PubSubClient(*(wifiClient->getClient()));
-  while (WL_CONNECTED != wifiClient->getStatus())
-  {
-    delay(200);
-  }
-  mqttClient->setServer(MQTT_SERVER_IP, MQTT_PORT);
-  mqttClient->setCallback(callback);
 
   //---------------------------------------------------------------------------
   // Fish Actuator
@@ -250,12 +189,13 @@ void setup()
   fishActuator->addFishAtHwId(2);
 
   CapSensor* capSensor = new CapSensor(new MyCapSensorAdatper(fishActuator, 0));
-}
 
-void subscribe()
-{
-  //client.subscribe("iof/ch/berne/sensor/aquarium-trigger");
-  mqttClient->subscribe("iof/#");
+  //-----------------------------------------------------------------------------
+  // MQTT Client
+  //-----------------------------------------------------------------------------
+  mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient);
+  mqttClient->setCallback(callback);
+  mqttClient->startupClient();
 }
 
 // The loop function is called in an endless loop
