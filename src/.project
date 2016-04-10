@@ -92,6 +92,11 @@
 			<locationURI>iof_aquarium_controllerAdafruit_PWM_Servo_Driver_Library/Adafruit_PWM_Servo_Driver_Library</locationURI>
 		</link>
 		<link>
+			<name>comp/ArduinoJson</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerArduinoJson/ArduinoJson</locationURI>
+		</link>
+		<link>
 			<name>comp/CmdArduino</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerCmdArduino/CmdArduino</locationURI>
@@ -125,6 +130,11 @@
 			<name>prod/CapSensor</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerCapSensor/CapSensor</locationURI>
+		</link>
+		<link>
+			<name>prod/Configuration</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerConfiguration/Configuration</locationURI>
 		</link>
 		<link>
 			<name>prod/FishActuator</name>

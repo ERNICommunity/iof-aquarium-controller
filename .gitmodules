@@ -25,3 +25,6 @@
 [submodule "lib/comp/CmdSequence"]
 	path = lib/comp/CmdSequence
 	url = https://github.com/dniklaus/CmdSequence.git
+[submodule "lib/comp/ArduinoJson"]
+	path = lib/comp/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson.git
