@@ -24,6 +24,7 @@ public:
   void printWiFiStatusChanged(wl_status_t& old_wlStatus);
   wl_status_t getStatus();
   inline WiFiClient* getClient() { return m_client; };
+  const char* getMacAddress() const;
 
 private:
   Timer* m_wifiConnectTimer;

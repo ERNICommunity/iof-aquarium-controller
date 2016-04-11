@@ -89,3 +89,7 @@ void IoF_WiFiClient::printWiFiStatusChanged(wl_status_t& old_wlStatus)
   }
 }
 
+const char* IoF_WiFiClient::getMacAddress() const
+{
+  return WiFi.macAddress().c_str();
+}
