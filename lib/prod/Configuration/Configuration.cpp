@@ -28,9 +28,9 @@ void Configuration::setConfig(char json[])
     JsonObject& jsonObjectRoot = m_jsonBuffer->parseObject(json);
 
     const char* aquariumId = jsonObjectRoot["aquarium-id"];
-    char* macAddr = 0;
-    int macAddrLen = m_adapter->getMacAddr(macAddr);
-    if ((0 == strncmp(aquariumId, macAddr, macAddrLen)) && (macAddrLen == strlen(aquariumId)))
+    const int macAddrLen = 18;
+    const char* macAddr = m_adapter->getMacAddr();
+    if ((macAddrLen == strlen(aquariumId)) && (0 == strncmp(aquariumId, macAddr, macAddrLen)))
     {
       // config is for this controller
       JsonArray& fishMapping = jsonObjectRoot["fish-mapping"];

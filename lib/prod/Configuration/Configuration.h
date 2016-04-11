@@ -20,11 +20,9 @@ public:
 
   /**
    * Get MAC Address.
-   *
-   * @param macAddr String with the MAC addr in the form <xx:xx:xx:xx:xx:xx> (out parameter, the callee shall allocate memory)
-   * @return size String size including terminating null char, normally 18 bytes
+   * @return macAddr c-String with the MAC address in the form "xx:xx:xx:xx:xx:xx" (memory allocated by callee)
    */
-  virtual int getMacAddr(char* macAddr) = 0;
+  virtual const char* getMacAddr() = 0;
 
   /**
    *
