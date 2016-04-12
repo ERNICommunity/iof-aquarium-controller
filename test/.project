@@ -41,6 +41,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>lib/plat/debug_cli</name>
+			<type>2</type>
+			<location>C:/git/arduino-projects/iof-aquarium-controller/lib/plat/debug-cli/debug_cli</location>
+		</link>
+		<link>
 			<name>lib/plat/timer</name>
 			<type>2</type>
 			<location>C:/git/arduino-projects/iof-aquarium-controller/lib/plat/timer</location>
