@@ -142,6 +142,11 @@
 			<locationURI>iof_aquarium_controllerFishActuator/FishActuator</locationURI>
 		</link>
 		<link>
+			<name>prod/MqttClient</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerMqttClient/MqttClient</locationURI>
+		</link>
+		<link>
 			<name>prod/sockets</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllersockets/sockets</locationURI>

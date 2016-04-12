@@ -46,6 +46,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include/ArduinoJson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/MqttClient}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.arduino.compiler.cpp.sketch.input.1426847132" name="CPP source files" superClass="it.baeyens.arduino.compiler.cpp.sketch.input"/>
 							</tool>
@@ -78,6 +79,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include/ArduinoJson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/MqttClient}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.arduino.compiler.c.sketch.input.231492211" name="C Source Files" superClass="it.baeyens.arduino.compiler.c.sketch.input"/>
 							</tool>
