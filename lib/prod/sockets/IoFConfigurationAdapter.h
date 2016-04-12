@@ -11,12 +11,13 @@
 #include <Configuration.h>
 
 class IoF_WiFiClient;
+class MqttClient;
 class FishActuator;
 
 class IoF_ConfigurationAdapter: public ConfigurationAdapter
 {
 public:
-  IoF_ConfigurationAdapter(IoF_WiFiClient* wifiClient, FishActuator* fishActuator);
+  IoF_ConfigurationAdapter(IoF_WiFiClient* wifiClient, MqttClient* mqttClient, FishActuator* fishActuator);
   virtual ~IoF_ConfigurationAdapter();
 
   const char* getMacAddr();
@@ -25,6 +26,7 @@ public:
 
 private:
     IoF_WiFiClient* m_wifiClient;
+    MqttClient* m_mqttClient;
     FishActuator* m_fishActuator;
 
 private:  // forbidden functions
