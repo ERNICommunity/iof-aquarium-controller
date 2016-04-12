@@ -11,12 +11,16 @@ class MyDebounceTimerAdatper : public TimerAdapter
 {
 private:
   CapSensor* m_capSensor;
+  unsigned int m_capSensingDelayMs;
   uint8_t m_lastTouchValue;
+  Timer m_capSensingDelayTimer;
   
 public:
-  MyDebounceTimerAdatper(CapSensor* capSensor)
+  MyDebounceTimerAdatper(CapSensor* capSensor, unsigned int capSensingDelay)
   : m_capSensor(capSensor)
   , m_lastTouchValue(0)
+  , m_capSensingDelayMs(capSensingDelay)
+  , m_capSensingDelayTimer()
   { }
   
   void timeExpired()
@@ -27,7 +31,12 @@ public:
       if (m_lastTouchValue != currentTouchValue)
       {
         m_lastTouchValue = currentTouchValue;
-        m_capSensor->notifyTouched(currentTouchValue);
+
+        if(!m_capSensingDelayTimer.isRunning())
+        {
+          m_capSensor->notifyTouched(currentTouchValue);
+          m_capSensingDelayTimer.startTimer(m_capSensingDelayMs);
+        }
       } 
     }
   }
@@ -35,8 +44,8 @@ public:
 
 //-----------------------------------------------------------------------------
 
-CapSensor::CapSensor(CapSensorAdapter* adapter)
-: m_debounceTimer(new Timer(new MyDebounceTimerAdatper(this), Timer::IS_RECURRING, s_defaultKeyPollTime))
+CapSensor::CapSensor(CapSensorAdapter* adapter, unsigned int capSensingDelayMs )
+: m_debounceTimer(new Timer(new MyDebounceTimerAdatper(this, capSensingDelayMs), Timer::IS_RECURRING, s_defaultKeyPollTime))
 , m_adapter(adapter)
 , m_adaCap(new Adafruit_CAP1188())
 { 

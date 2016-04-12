@@ -35,7 +35,7 @@ class CapSensor
 {
 public:
   
-  CapSensor(CapSensorAdapter* adapter = 0);
+  CapSensor(CapSensorAdapter* adapter = 0,  unsigned int capSensingDelayMs = 5000);
 
   /**
    * Destructor.
@@ -68,6 +68,7 @@ private:
   Adafruit_CAP1188* m_adaCap;
   static const int s_defaultKeyPollTime;
   
+
 private:  // forbidden functions
   CapSensor(const CapSensor& src);              // copy constructor
   CapSensor& operator = (const CapSensor& src); // assignment operator
