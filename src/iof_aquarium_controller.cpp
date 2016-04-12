@@ -21,8 +21,6 @@
 #define AQUARIUM_ID     "1001"
 #define AQUARIUM_SENSOR "sensor/aquarium-trigger"
 
-#define MY_FISH_ID "1"
-
 IoF_WiFiClient* wifiClient = 0;
 MqttClient* mqttClient = 0;
 FishActuator* fishActuator = 0;

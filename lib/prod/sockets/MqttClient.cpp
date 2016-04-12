@@ -17,9 +17,11 @@
 #include <WiFiClient.h>
 #include <WString.h>
 
+#define MY_FISH_ID "1"
+
 const int  MqttClient::s_reconnectInterval_ms = 1000;
 const char* MqttClient::capTouchedPublishMsg = "iof/ch/berne/sensor/aquarium-trigger";
-const char* MqttClient::capTouchedPayload = "true";
+const char* MqttClient::capTouchedPayload = MY_FISH_ID;
 
 
 //-----------------------------------------------------------------------------
@@ -90,7 +92,7 @@ void MqttClient::reconnect()
   {
     Serial.print("Attempting MQTT connection... ");
     // Attempt to connect
-    if (m_pubSubClient->connect("iofiof-1"))
+    if (m_pubSubClient->connect(MY_FISH_ID))
     {
       Serial.println("connected");
       delay(5000);
