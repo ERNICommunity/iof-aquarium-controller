@@ -26,13 +26,14 @@ public:
   /**
    * Fish activation event notification.
    * Occurs when a fish gets activated successfully.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
    */
   virtual void notifyFishEvent(unsigned int fishHwId, FishEvent event) = 0;
 
   typedef enum
   {
     ErrFishNotFound,
+    ErrFishHwIdOutOfRange,
     ErrFishQueueFull,
     ErrFishQueueCorrupt,
     ErrFishAlreadyExists,
@@ -42,7 +43,7 @@ public:
   /**
    * Fish error notification.
    * Occurs when any error occurred.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
    */
   virtual void notifyFishError(unsigned int fishHwId, FishError error) = 0;
 
@@ -85,26 +86,26 @@ public:
 
   /**
    * Check if a particular Fish is configured or not.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
    * @return isFishConfigured true: Fish is configured, false: Fish is not configured.
    */
   bool isFishConfigured(unsigned int fishHwId);
 
   /**
    * Add a new Fish to HW port specified by a particular Fish Hardware Id.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
    */
   void addFishAtHwId(unsigned int fishHwId);
 
   /**
    * Remove a Fish from HW port specified by a particular Fish Hardware Id.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
    */
   void delFishAtHwId(unsigned int fishHwId);
 
   /**
    * Activate a particular Fish.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
    */
   void activateFish(unsigned int fishHwId);
 
