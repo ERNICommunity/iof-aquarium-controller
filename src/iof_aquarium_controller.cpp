@@ -6,6 +6,7 @@
 #include <Timer.h>
 #include <TimerContext.h>
 #include <IoF_WiFiClient.h>
+#include <IoF_MqttClientAdapter.h>
 #include <MqttClient.h>
 #include <FishActuator.h>
 
@@ -65,11 +66,12 @@ public:
   void notifyFishError(unsigned int fishHwId, FishError error)
   {
     Serial.printf("notifyFishError(), fishHwId=%d, error=%s\n", fishHwId,
-        error == FishNotificationAdapter::ErrFishQueueFull     ? "ErrFishQueueFull   " :
-        error == FishNotificationAdapter::ErrFishQueueCorrupt  ? "ErrFishQueueCorrupt" :
-        error == FishNotificationAdapter::ErrFishAlreadyExists ? "FishAlreadyExists  " :
-        error == FishNotificationAdapter::ErrFishBusy          ? "FishBusy           " :
-        error == FishNotificationAdapter::ErrFishNotFound      ? "FishNotFound       " : "UNKNOWN");
+        error == FishNotificationAdapter::ErrFishQueueFull      ? "FishQueueFull      " :
+        error == FishNotificationAdapter::ErrFishQueueCorrupt   ? "FishQueueCorrupt   " :
+        error == FishNotificationAdapter::ErrFishAlreadyExists  ? "FishAlreadyExists  " :
+        error == FishNotificationAdapter::ErrFishBusy           ? "FishBusy           " :
+        error == FishNotificationAdapter::ErrFishHwIdOutOfRange ? "FishHwIdOutOfRange " :
+        error == FishNotificationAdapter::ErrFishNotFound       ? "FishNotFound       " : "UNKNOWN");
   }
 };
 
@@ -110,47 +112,39 @@ public:
 //-----------------------------------------------------------------------------
 void callback(char* topic, byte* payload, unsigned int length)
 {
-  unsigned int fishId = 0;
+  unsigned int fishId = 1000;
   Serial.print(F("Message arrived ["));
   Serial.print(topic);
   Serial.print(F("] "));
   for (int i = 0; i < length; i++)
   {
     Serial.print((char) payload[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
-  if (NULL != fishActuator)
+  if (0 == strncmp(topic, "iof/config", strlen("iof/config")))
   {
-    switch (payload[0])
+    Serial.println("Config received!");
+  }
+  else
+  {
+    if (0 == strncmp(topic, "iof/ch/berne", strlen("iof/ch/berne")))
     {
-      case '1':
-        fishId = 0;
-        break;
-      case '2':
-        fishId = 1;
-        break;
-      case '3':
-        fishId = 2;
-        break;
-      case '4':
-        fishId = 3;
-        break;
-      case '5':
-        fishId = 4;
-        break;
-      case '6':
-        fishId = 5;
-        break;
-      case '7':
-        fishId = 6;
-        break;
-      case '8':
-        fishId = 7;
-        break;
+      fishId = 0;
     }
-    fishActuator->activateFish(fishId);
+    else if  (0 == strncmp(topic, "iof/ch/zurich", strlen("iof/ch/zurich")))
+    {
+      fishId = 1;
+    }
+    else if  (0 == strncmp(topic, "iof/ch/baar", strlen("iof/ch/baar")))
+    {
+      fishId = 2;
+    }
+
+    if ((0 != fishActuator) && (fishId != 1000))
+    {
+      fishActuator->activateFish(fishId);
+    }
   }
 }
 
@@ -191,7 +185,7 @@ void setup()
   //-----------------------------------------------------------------------------
   // MQTT Client
   //-----------------------------------------------------------------------------
-  mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient);
+  mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient, new IoF_MqttClientAdapter(wifiClient));
   mqttClient->setCallback(callback);
   mqttClient->startupClient();
 }

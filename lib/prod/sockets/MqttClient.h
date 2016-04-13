@@ -8,16 +8,43 @@
 #ifndef PROD_SOCKETS_MQTTCLIENT_H_
 #define PROD_SOCKETS_MQTTCLIENT_H_
 
+#include <stdint.h>
+
 class IoF_WiFiClient;
 class FishActuator;
 class PubSubClient;
 class Timer;
 
+//-----------------------------------------------------------------------------
+
+class MqttClientAdapter
+{
+public:
+  virtual ~MqttClientAdapter() { }
+
+  /**
+   * Get MAC Address.
+   * @return macAddr c-String with the MAC address in the form "xx:xx:xx:xx:xx:xx" (memory allocated by callee)
+   */
+  virtual const char* getMacAddr() = 0;
+
+protected:
+  MqttClientAdapter() { }
+private:  // forbidden functions
+  MqttClientAdapter(const MqttClientAdapter& src);              // copy constructor
+  MqttClientAdapter& operator = (const MqttClientAdapter& src); // assignment operator
+};
+
+//-----------------------------------------------------------------------------
+
 class MqttClient
 {
 public:
-  MqttClient(const char* mqttServerDomain, unsigned short int mqttPort, IoF_WiFiClient* iofWifiClient);
+  MqttClient(const char* mqttServerDomain, unsigned short int mqttPort, IoF_WiFiClient* iofWifiClient, MqttClientAdapter* adapter = 0);
   virtual ~MqttClient();
+
+  void attachAdapter(MqttClientAdapter* adapter);
+  MqttClientAdapter* adapter();
 
   void setCallback(void (*callback)(char*, uint8_t*, unsigned int));
   void startupClient();
@@ -28,10 +55,10 @@ public:
 
 private:
   IoF_WiFiClient* m_iofWifiClient;
+  MqttClientAdapter* m_adapter;
   PubSubClient* m_pubSubClient;
   Timer* m_mqttConnectTimer;
   static const int s_reconnectInterval_ms;
-  static const char* capTouchedPublishMsg;
   static const char* capTouchedPayload;
 
 private:  // forbidden functions

@@ -17,11 +17,8 @@
 #include <WiFiClient.h>
 #include <WString.h>
 
-#define MY_FISH_ID "1"
-
 const int  MqttClient::s_reconnectInterval_ms = 1000;
-const char* MqttClient::capTouchedPublishMsg = "iof/ch/berne/sensor/aquarium-trigger";
-const char* MqttClient::capTouchedPayload = MY_FISH_ID;
+const char* MqttClient::capTouchedPayload = "true";
 
 
 //-----------------------------------------------------------------------------
@@ -52,12 +49,12 @@ public:
 // MQTT Client
 //-----------------------------------------------------------------------------
 
-MqttClient::MqttClient(const char* mqttServerDomain, unsigned short int mqttPort, IoF_WiFiClient* iofWifiClient)
+MqttClient::MqttClient(const char* mqttServerDomain, unsigned short int mqttPort, IoF_WiFiClient* iofWifiClient, MqttClientAdapter* adapter)
 : m_iofWifiClient(iofWifiClient)
+, m_adapter(adapter)
 , m_pubSubClient(new PubSubClient(mqttServerDomain, mqttPort, *(iofWifiClient->getClient())))
 , m_mqttConnectTimer(0)
-{
-}
+{ }
 
 MqttClient::~MqttClient()
 {
@@ -68,6 +65,17 @@ MqttClient::~MqttClient()
   delete m_mqttConnectTimer;
   m_mqttConnectTimer = 0;
 }
+
+void MqttClient::attachAdapter(MqttClientAdapter* adapter)
+{
+  m_adapter = adapter;
+}
+
+MqttClientAdapter* MqttClient::adapter()
+{
+  return m_adapter;
+}
+
 
 void MqttClient::setCallback(void (*callback)(char*, uint8_t*, unsigned int))
 {
@@ -88,11 +96,15 @@ void MqttClient::startupClient()
 
 void MqttClient::reconnect()
 {
-  if ((WL_CONNECTED == WiFi.status()) && (!m_pubSubClient->connected()))
+  if ((0 != m_adapter) && (WL_CONNECTED == WiFi.status()) && (!m_pubSubClient->connected()))
   {
-    Serial.print("Attempting MQTT connection... ");
+    const char* macAddress = m_adapter->getMacAddr();
+
+    Serial.print("Attempting MQTT connection, ID is MAC Address: ");
+    Serial.print(macAddress);
+    Serial.print(" ... ");
     // Attempt to connect
-    if (m_pubSubClient->connect(MY_FISH_ID))
+    if (m_pubSubClient->connect(macAddress))
     {
       Serial.println("connected");
       delay(5000);
@@ -122,15 +134,52 @@ void MqttClient::reconnect()
 
 void MqttClient::subscribe()
 {
-  //client.subscribe("iof/ch/berne/sensor/aquarium-trigger");
   //TODO
-  m_pubSubClient->subscribe("iof/#");
+  m_pubSubClient->subscribe("iof/ch/berne/sensor/aquarium-trigger");
+  loop();
+  m_pubSubClient->subscribe("iof/ch/zurich/sensor/aquarium-trigger");
+  loop();
+  m_pubSubClient->subscribe("iof/ch/baar/sensor/aquarium-trigger");
+  loop();
+
+  if (0 != m_adapter)
+  {
+    const char* macAddress = m_adapter->getMacAddr();
+
+    if (0 == strncmp(macAddress, "18:FE:34:DB:50:EF", 17))
+    {
+      m_pubSubClient->subscribe("iof/config/18:FE:34:DB:50:EF");
+    }
+    else if (0 == strncmp(macAddress, "5C:CF:7F:07:5E:6A", 17))
+    {
+      m_pubSubClient->subscribe("iof/config/5C:CF:7F:07:5E:6A");
+    }
+    else if (0 == strncmp(macAddress, "18:FE:34:DB:4F:C5", 17))
+    {
+      m_pubSubClient->subscribe("iof/config/18:FE:34:DB:4F:C5");
+    }
+  }
 }
 
 void MqttClient::publishCapTouched()
 {
-  Serial.println("Touch down!");
-  m_pubSubClient->publish(capTouchedPublishMsg, capTouchedPayload);
+  if (0 != m_adapter)
+  {
+    const char* macAddress = m_adapter->getMacAddr();
+
+    if (0 == strncmp(macAddress, "18:FE:34:DB:50:EF", 17))
+    {
+      m_pubSubClient->publish("iof/ch/berne/sensor/aquarium-trigger", capTouchedPayload);
+    }
+    else if (0 == strncmp(macAddress, "5C:CF:7F:07:5E:6A", 17))
+    {
+      m_pubSubClient->publish("iof/ch/zurich/sensor/aquarium-trigger", capTouchedPayload);
+    }
+    else if (0 == strncmp(macAddress, "18:FE:34:DB:4F:C5", 17))
+    {
+      m_pubSubClient->publish("iof/ch/baar/sensor/aquarium-trigger", capTouchedPayload);
+    }
+  }
 }
 
 void MqttClient::loop()
