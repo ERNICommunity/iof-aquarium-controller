@@ -112,6 +112,11 @@ void FishCollection::addFishAtHwId(unsigned int fishHwId)
       }
       next->setNext(fish);
     }
+    if (0 != m_adapter)
+    {
+      // Notify: Fish with the particular HW ID created!
+      m_adapter->notifyFishEvent(fishHwId, FishNotificationAdapter::EvtFishAdded);
+    }
   }
   else
   {
@@ -145,6 +150,11 @@ void FishCollection::delFishAtHwId(unsigned int fishHwId)
       next->setNext(fish->next());
       delete fish;
       fish = 0;
+    }
+    if (0 != m_adapter)
+    {
+      // Notify: Fish with the particular HW ID deleted!
+      m_adapter->notifyFishEvent(fishHwId, FishNotificationAdapter::EvtFishDeleted);
     }
   }
   else

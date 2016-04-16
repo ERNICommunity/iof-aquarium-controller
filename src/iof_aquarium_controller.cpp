@@ -12,6 +12,8 @@
 #include <MqttClient.h>
 #include <FishActuator.h>
 #include <SerialCommand.h>
+#include <Configuration.h>
+#include <IoFConfigurationAdapter.h>
 
 // Update these with values suitable for your network.
 #define WIFI_SSID       "DNNet"
@@ -29,6 +31,7 @@ SerialCommand* sCmd = 0;
 IoF_WiFiClient* wifiClient = 0;
 MqttClient* mqttClient = 0;
 FishActuator* fishActuator = 0;
+Configuration* cfg = 0;
 
 #define SDA_PIN 4
 #define SCL_PIN 5
@@ -172,6 +175,10 @@ void callback(char* topic, byte* payload, unsigned int length)
   if (0 == strncmp(topic, "iof/config", strlen("iof/config")))
   {
     Serial.println("Config received!");
+    if (0 != cfg)
+    {
+      cfg->setConfig((char*)payload);
+    }
   }
   else
   {
@@ -233,10 +240,10 @@ void setup()
   // Fish Actuator
   //---------------------------------------------------------------------------
   fishActuator = new FishActuator(new TestFishNotificationAdapter());
-  fishActuator->addFishAtHwId(0);
-  fishActuator->addFishAtHwId(1);
-  fishActuator->addFishAtHwId(2);
 
+  //---------------------------------------------------------------------------
+  // Capacitive Sensor
+  //---------------------------------------------------------------------------
   CapSensor* capSensor = new CapSensor(new MyCapSensorAdatper(fishActuator, 0));
 
   //-----------------------------------------------------------------------------
@@ -245,6 +252,11 @@ void setup()
   mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient, new IoF_MqttClientAdapter(wifiClient));
   mqttClient->setCallback(callback);
   mqttClient->startupClient();
+
+  //-----------------------------------------------------------------------------
+  // Configuration
+  //-----------------------------------------------------------------------------
+  cfg = new Configuration(new IoF_ConfigurationAdapter(wifiClient, mqttClient, fishActuator));
 }
 
 // The loop function is called in an endless loop

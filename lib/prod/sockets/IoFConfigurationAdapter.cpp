@@ -5,6 +5,8 @@
  *      Author: niklausd
  */
 
+#include <Arduino.h>
+#include <stdio.h>
 #include <IoF_WiFiClient.h>
 #include <FishActuator.h>
 #include <MqttClient.h>
@@ -31,22 +33,26 @@ void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char
 {
   if (0 != m_mqttClient)
   {
-    char* triggerTopicString;
-    sprintf(triggerTopicString, "iof/%s/%s/aquarium-trigger", country, city);
-    // TODO: implement plugPublishTopic()
-//    m_mqttClient->plugPublishTopic(new MqttPublishTopic(triggerTopicString));
+    Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
+    Serial.print(country);
+    Serial.print("/");
+    Serial.println(city);
+    char triggerTopicString[100];
+    sprintf(triggerTopicString, "iof/%s/%s/sensor/aquarium-trigger", country, city);
+    Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
+    Serial.println(triggerTopicString);
+    // TODO: MqttClient: configure "iof/<country>/<city>/sensor/aquarium-trigger"
+    //       as the topic to publish when the sensor is getting activated
   }
-
-  // set "iof/<country>/<city>/aquarium-trigger" as the topic to publish to when the sensor gets activated
 }
 
 void IoF_ConfigurationAdapter::configureFish(unsigned int fishHwId, const char* country, const char* city)
 {
-  if (!m_fishActuator->isFishConfigured(fishHwId))
+  if (!m_fishActuator->isFishConfigured(fishHwId-1))
   {
-    m_fishActuator->addFishAtHwId(fishHwId);
+    m_fishActuator->addFishAtHwId(fishHwId-1);
   }
 
-  // TODO
-  // subscribe to "iof/<country>/<city>/aquarium-trigger" and assign fishHwId to this topic
+  // TODO:
+  // subscribe to "iof/<country>/<city>/sensor/aquarium-trigger" and assign fishHwId to this topic
 }
