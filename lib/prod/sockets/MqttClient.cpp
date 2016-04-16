@@ -5,15 +5,6 @@
  *      Author: scan
  */
 
-#ifdef MQTT_MAX_PACKET_SIZE
-#undef MQTT_MAX_PACKET_SIZE
-#endif
-
-#ifndef MQTT_MAX_PACKET_SIZE
-#define MQTT_MAX_PACKET_SIZE 500
-#endif
-
-
 #include <ESP8266WiFi.h>
 #include <FishActuator.h>
 #include <HardwareSerial.h>
