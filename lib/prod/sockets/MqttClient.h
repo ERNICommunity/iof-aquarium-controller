@@ -49,7 +49,9 @@ public:
   void setCallback(void (*callback)(char*, uint8_t*, unsigned int));
   void startupClient();
   void reconnect();
-  void subscribe();
+  void subscribeToConfigTopic(const char* macAddress);
+  void subscribeToAquariumTopic();
+  void publishConfigID(const char* macAddress);
   void setPublishInfo(const char* country, const char* city);
   void publishCapTouched();
   void loop();

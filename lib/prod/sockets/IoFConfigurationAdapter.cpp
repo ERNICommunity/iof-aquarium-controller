@@ -48,7 +48,4 @@ void IoF_ConfigurationAdapter::configureFish(unsigned int fishHwId, const char* 
   {
     m_fishActuator->addFishAtHwId(fishHwId-1);
   }
-
-  // TODO:
-  // subscribe to "iof/<country>/<city>/sensor/aquarium-trigger" and assign fishHwId to this topic
 }

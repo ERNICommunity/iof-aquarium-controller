@@ -21,11 +21,7 @@
 #define MQTT_SERVER_IP  "iot.eclipse.org"
 #define MQTT_PORT       1883
 
-#define OFFICE_COUNTRY  "ch"
-#define OFFICE_NAME     "berne"
-#define OFFICE_KEY      "iofiof"
-#define AQUARIUM_ID     "1001"
-#define AQUARIUM_SENSOR "sensor/aquarium-trigger"
+#define PUBLISH_SUFFIX  "sensor/aquarium-trigger"
 
 SerialCommand* sCmd = 0;
 IoF_WiFiClient* wifiClient = 0;
@@ -158,11 +154,10 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// MQTT Client subscriber callback
+// MQTT callback, when receiving a subscribed topic
 //-----------------------------------------------------------------------------
 void callback(char* topic, byte* payload, unsigned int length)
 {
-  unsigned int fishId = 1000;
   Serial.print(F("Message arrived ["));
   Serial.print(topic);
   Serial.print(F("] "));
@@ -174,7 +169,7 @@ void callback(char* topic, byte* payload, unsigned int length)
 
   if (0 == strncmp(topic, "iof/config", strlen("iof/config")))
   {
-    Serial.println("Config received!");
+    Serial.println(F("Config received!"));
     if (0 != cfg)
     {
       cfg->setConfig((char*)payload);
@@ -182,22 +177,18 @@ void callback(char* topic, byte* payload, unsigned int length)
   }
   else
   {
-    if (0 == strncmp(topic, "iof/ch/berne", strlen("iof/ch/berne")))
+    // check if received topic ends with expected aquarium trigger
+    if (0 == strncmp(topic + strlen(topic) - strlen(PUBLISH_SUFFIX), PUBLISH_SUFFIX, strlen(PUBLISH_SUFFIX)))
     {
-      fishId = 0;
-    }
-    else if  (0 == strncmp(topic, "iof/ch/zurich", strlen("iof/ch/zurich")))
-    {
-      fishId = 1;
-    }
-    else if  (0 == strncmp(topic, "iof/ch/baar", strlen("iof/ch/baar")))
-    {
-      fishId = 2;
-    }
-
-    if ((0 != fishActuator) && (fishId != 1000))
-    {
-      fishActuator->activateFish(fishId);
+      unsigned int fishId = 1000;
+      //TODO: get Fish ID from payload
+      // e.g. fishId = cfg->getFishId((char*)payload);
+      if ((0 != fishActuator) && (fishId != 1000))
+      {
+        Serial.print(F("Aquarium trigger event received! activate fish ID: "));
+        Serial.println(fishId);
+        fishActuator->activateFish(fishId);
+      }
     }
   }
 }

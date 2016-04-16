@@ -110,9 +110,14 @@ void MqttClient::reconnect()
     if (m_pubSubClient->connect(macAddress))
     {
       Serial.println("connected");
+      //TODO delay needed?
       delay(5000);
       // resubscribe
-      subscribe();
+      subscribeToConfigTopic(macAddress);
+      delay(500);
+      subscribeToAquariumTopic();
+      //TODO when to publish a config request? Only at startup or at every reconnection?
+      publishConfigID(macAddress);
     }
     else
     {
@@ -135,32 +140,33 @@ void MqttClient::reconnect()
   }
 }
 
-void MqttClient::subscribe()
+void MqttClient::subscribeToConfigTopic(const char* macAddress)
 {
-  //TODO
-  m_pubSubClient->subscribe("iof/ch/berne/sensor/aquarium-trigger");
-  loop();
-  m_pubSubClient->subscribe("iof/ch/zurich/sensor/aquarium-trigger");
-  loop();
-  m_pubSubClient->subscribe("iof/ch/baar/sensor/aquarium-trigger");
-  loop();
-
-  if (0 != m_adapter)
+  if (0 != m_pubSubClient)
   {
-    const char* macAddress = m_adapter->getMacAddr();
+    size_t buffSize = 100;
+    char configTopicString[buffSize];
+    snprintf(configTopicString, buffSize, "iof/config/%s", macAddress);
+    m_pubSubClient->subscribe(configTopicString);
+    loop();
+  }
+}
 
-    if (0 == strncmp(macAddress, "18:FE:34:DB:50:EF", 17))
-    {
-      m_pubSubClient->subscribe("iof/config/18:FE:34:DB:50:EF");
-    }
-    else if (0 == strncmp(macAddress, "5C:CF:7F:07:5E:6A", 17))
-    {
-      m_pubSubClient->subscribe("iof/config/5C:CF:7F:07:5E:6A");
-    }
-    else if (0 == strncmp(macAddress, "18:FE:34:DB:4F:C5", 17))
-    {
-      m_pubSubClient->subscribe("iof/config/18:FE:34:DB:4F:C5");
-    }
+void MqttClient::subscribeToAquariumTopic()
+{
+  if (0 != m_pubSubClient)
+  {
+    m_pubSubClient->subscribe("iof/+/+/sensor/aquarium-trigger");
+    loop();
+  }
+}
+
+void MqttClient::publishConfigID(const char* macAddress)
+{
+  if (0 != m_pubSubClient)
+  {
+    m_pubSubClient->publish("iof/config", macAddress);
+    loop();
   }
 }
 
@@ -172,14 +178,17 @@ void MqttClient::setPublishInfo(const char* country, const char* city)
 
 void MqttClient::publishCapTouched()
 {
-  size_t buffSize = 100;
-  char pubTopicString[buffSize];
-  snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_clientCountry, m_clientCity);
-  m_pubSubClient->publish(pubTopicString, m_clientCity);
-  Serial.print(F("MQTT publish: "));
-  Serial.print(pubTopicString);
-  Serial.print(F(" payload: "));
-  Serial.println(m_clientCity);
+  if (0 != m_pubSubClient)
+  {
+    size_t buffSize = 100;
+    char pubTopicString[buffSize];
+    snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_clientCountry, m_clientCity);
+    m_pubSubClient->publish(pubTopicString, m_clientCity);
+    Serial.print(F("MQTT publish: "));
+    Serial.print(pubTopicString);
+    Serial.print(F(" payload: "));
+    Serial.println(m_clientCity);
+  }
 }
 
 void MqttClient::loop()
