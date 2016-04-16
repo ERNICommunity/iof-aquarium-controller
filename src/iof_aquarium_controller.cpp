@@ -5,10 +5,13 @@
 #include <CapSensor.h>
 #include <Timer.h>
 #include <TimerContext.h>
+#include <DbgCliNode.h>
+#include <DbgCliTopic.h>
 #include <IoF_WiFiClient.h>
 #include <IoF_MqttClientAdapter.h>
 #include <MqttClient.h>
 #include <FishActuator.h>
+#include <SerialCommand.h>
 
 // Update these with values suitable for your network.
 #define WIFI_SSID       "DNNet"
@@ -22,12 +25,56 @@
 #define AQUARIUM_ID     "1001"
 #define AQUARIUM_SENSOR "sensor/aquarium-trigger"
 
+SerialCommand* sCmd = 0;
 IoF_WiFiClient* wifiClient = 0;
 MqttClient* mqttClient = 0;
 FishActuator* fishActuator = 0;
 
 #define SDA_PIN 4
 #define SCL_PIN 5
+
+//-----------------------------------------------------------------------------
+// Arduino Cmd I/F
+//-----------------------------------------------------------------------------
+void dbgCliExecute()
+{
+  if (0 != DbgCli_Node::RootNode())
+  {
+    const unsigned int firstArgToHandle = 1;
+    const unsigned int maxArgCnt = 10;
+    char* args[maxArgCnt];
+    char* arg = "dbg";
+    unsigned int arg_cnt = 0;
+    while ((maxArgCnt > arg_cnt) && (0 != arg))
+    {
+      args[arg_cnt] = arg;
+      arg = sCmd->next();
+      arg_cnt++;
+    }
+    DbgCli_Node::RootNode()->execute(static_cast<unsigned int>(arg_cnt), const_cast<const char**>(args), firstArgToHandle);
+  }
+}
+
+void sayHello()
+{
+  char *arg;
+  arg = sCmd->next();    // Get the next argument from the SerialCommand object buffer
+  if (arg != NULL)       // As long as it exists, take it
+  {
+    Serial.print("Hello ");
+    Serial.println(arg);
+  }
+  else
+  {
+    Serial.println("Hello, whoever you are");
+  }
+}
+
+// This is the default handler, and gets called when no other command matches.
+void unrecognized(const char *command)
+{
+  Serial.println("What?");
+}
 
 //-----------------------------------------------------------------------------
 // Free Heap Logger
@@ -152,19 +199,29 @@ void callback(char* topic, byte* payload, unsigned int length)
 void setup()
 {
   //-----------------------------------------------------------------------------
-  // Free Heap Logger
+  // Serial Command Object for Debug CLI
   //-----------------------------------------------------------------------------
-  new Timer(new FreeHeapLogTimerAdapter(), Timer::IS_RECURRING, c_freeHeapLogIntervalMillis);
-
-  Wire.begin(SDA_PIN, SCL_PIN);
-
   Serial.begin(115200);
+  sCmd = new SerialCommand();
+  DbgCli_Node::AssignRootNode(new DbgCli_Topic(0, "dbg", "Internet of Fish Aquarium Controller Debug CLI Root Node."));
+
+  // Setup callbacks for SerialCommand commands
+  sCmd->addCommand("hello", sayHello);        // Echos the string argument back
+  sCmd->addCommand("dbg", dbgCliExecute);
+  sCmd->setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
 
   Serial.println();
   Serial.println(F("---------------------------------------------"));
   Serial.println(F("Hello from IoF Aquarium Controller!"));
   Serial.println(F("---------------------------------------------"));
   Serial.println();
+
+  //-----------------------------------------------------------------------------
+  // Free Heap Logger
+  //-----------------------------------------------------------------------------
+  new Timer(new FreeHeapLogTimerAdapter(), Timer::IS_RECURRING, c_freeHeapLogIntervalMillis);
+
+  Wire.begin(SDA_PIN, SCL_PIN);
 
   //-----------------------------------------------------------------------------
   // WiFi Connection
@@ -193,6 +250,7 @@ void setup()
 // The loop function is called in an endless loop
 void loop()
 {
-  mqttClient->loop();
-  yield();
+  mqttClient->loop();     // process MQTT protocol
+  sCmd->readSerial();     // process serial commands
+  yield();                // process Timer expiration evaluation
 }

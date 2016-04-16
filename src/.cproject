@@ -21,32 +21,31 @@
 								<option id="it.baeyens.arduino.compiler.cpp.sketch.option.incpath.1056280906" name="Include Paths (-I)" superClass="it.baeyens.arduino.compiler.cpp.sketch.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/arduino/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/arduino/variant}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/SPI}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/esp8266}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/esp8266/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WiFi}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WiFi/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WebServer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WebServer/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/Wire}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/SPI}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/Timer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_cli}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_trace}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/CmdArduino}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/CmdSequence}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/pubsubclient/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_MQTT_Library}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_PWM_Servo_Driver_Library}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_CAP1188_Library}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/CapSensor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/sockets}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/Configuration}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/SerialCommand}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/CmdSequence}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/pubsubclient/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include/ArduinoJson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/sockets}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/MqttClient}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/Configuration}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/CapSensor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator/src}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.arduino.compiler.cpp.sketch.input.1426847132" name="CPP source files" superClass="it.baeyens.arduino.compiler.cpp.sketch.input"/>
 							</tool>
@@ -54,32 +53,31 @@
 								<option id="it.baeyens.arduino.compiler.c.sketch.option.incpath.1858869127" name="Include Paths (-I)" superClass="it.baeyens.arduino.compiler.c.sketch.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/arduino/core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/arduino/variant}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/Timer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/Wire}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_MQTT_Library}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_PWM_Servo_Driver_Library}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_CAP1188_Library}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/SPI}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/esp8266}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WebServer}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WiFi}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WebServer/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WiFi/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/esp8266/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/sockets}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/CmdArduino}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/CmdSequence}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WiFi}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WiFi/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WebServer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/Libraries/ESP8266WebServer/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/Timer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_cli}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/plat/debug_trace}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_PWM_Servo_Driver_Library}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/Adafruit_CAP1188_Library}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/SerialCommand}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/CmdSequence}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/pubsubclient/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/CapSensor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/Configuration}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/comp/ArduinoJson/include/ArduinoJson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/sockets}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/MqttClient}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/Configuration}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/CapSensor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/iof_aquarium_controller/prod/FishActuator/src}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.arduino.compiler.c.sketch.input.231492211" name="C Source Files" superClass="it.baeyens.arduino.compiler.c.sketch.input"/>
 							</tool>
@@ -92,7 +90,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="comp/ArduinoJson/third-party|comp/ArduinoJson/test|comp/ArduinoJson/scripts|comp/ArduinoJson/examples|prod/CapSensor/Examples|comp/pubsubclient/tests|comp/CmdArduino/examples|comp/Adafruit_CAP1188_Library/examples|comp/pubsubclient/examples|plat/Timer/Examples|comp/Adafruit_PWM_Servo_Driver_Library/examples|comp/Adafruit_MQTT_Library/examples|Libraries/*/?xamples|Libraries/*/?xtras" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="comp/SerialCommand/examples|comp/ArduinoJson/third-party|comp/ArduinoJson/test|comp/ArduinoJson/scripts|comp/ArduinoJson/examples|prod/CapSensor/Examples|comp/pubsubclient/tests|comp/CmdArduino/examples|comp/Adafruit_CAP1188_Library/examples|comp/pubsubclient/examples|plat/Timer/Examples|comp/Adafruit_PWM_Servo_Driver_Library/examples|comp/Adafruit_MQTT_Library/examples|Libraries/*/?xamples|Libraries/*/?xtras" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

@@ -82,11 +82,6 @@
 			<locationURI>iof_aquarium_controllerAdafruit_CAP1188_Library/Adafruit_CAP1188_Library</locationURI>
 		</link>
 		<link>
-			<name>comp/Adafruit_MQTT_Library</name>
-			<type>2</type>
-			<locationURI>iof_aquarium_controllerAdafruit_MQTT_Library/Adafruit_MQTT_Library</locationURI>
-		</link>
-		<link>
 			<name>comp/Adafruit_PWM_Servo_Driver_Library</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerAdafruit_PWM_Servo_Driver_Library/Adafruit_PWM_Servo_Driver_Library</locationURI>
@@ -97,14 +92,14 @@
 			<locationURI>iof_aquarium_controllerArduinoJson/ArduinoJson</locationURI>
 		</link>
 		<link>
-			<name>comp/CmdArduino</name>
-			<type>2</type>
-			<locationURI>iof_aquarium_controllerCmdArduino/CmdArduino</locationURI>
-		</link>
-		<link>
 			<name>comp/CmdSequence</name>
 			<type>2</type>
 			<locationURI>iof_aquarium_controllerCmdSequence/CmdSequence</locationURI>
+		</link>
+		<link>
+			<name>comp/SerialCommand</name>
+			<type>2</type>
+			<locationURI>iof_aquarium_controllerSerialCommand/SerialCommand</locationURI>
 		</link>
 		<link>
 			<name>comp/pubsubclient</name>

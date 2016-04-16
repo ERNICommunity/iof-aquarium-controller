@@ -12,19 +12,19 @@
 #include <DbgCliNode.h>
 #include <DbgCliTopic.h>
 
-class HalDbgCmd_Angle : public DbgCli_Command
+class DbgCli_Command_FishAngle : public DbgCli_Command
 {
 public:
-  HalDbgCmd_Angle(FishHal* hal)
-  : DbgCli_Command(new DbgCli_Topic(DbgCli_Node::RootNode(), "hal", "HW Abstraction Layer"), "ang", "Set Angle.")
+  DbgCli_Command_FishAngle(FishHal* hal, DbgCli_Topic* dbgCliTopic)
+  : DbgCli_Command(dbgCliTopic, "ang", "Set Angle.")
   , m_hal(hal)
   { }
 
-  virtual ~HalDbgCmd_Angle() { }
+  virtual ~DbgCli_Command_FishAngle() { }
 
   void execute(unsigned int argc, const char** args, unsigned int idxToFirstArgToHandle)
   {
-    if (argc < 2)
+    if (argc < 5)
     {
       printUsage();
     }
@@ -32,6 +32,11 @@ public:
     {
       unsigned int portId = atoi(args[idxToFirstArgToHandle]);
       int angle = atoi(args[idxToFirstArgToHandle+1]);
+      Serial.print("DbgCli_Command_FishAngle, setAngle(");
+      Serial.print(portId);
+      Serial.print(", ");
+      Serial.print(angle);
+      Serial.println(")");
       m_hal->setAngle(portId, angle);
     }
   }
@@ -39,15 +44,16 @@ public:
 private:
   void printUsage()
   {
-    Serial.println("dbg hal - usage: <portId> {0..15} <angle> {-90 .. 90}");
+    Serial.println("dbg hal ang - usage: <portId> {0..15} <angle> {-90 .. 90}");
   }
 
 private:
   FishHal* m_hal;
 
 private: // forbidden default functions
-  HalDbgCmd_Angle& operator = (const HalDbgCmd_Angle& src);  // assignment operator
-  HalDbgCmd_Angle(const HalDbgCmd_Angle& src);               // copy constructor
+  DbgCli_Command_FishAngle();
+  DbgCli_Command_FishAngle& operator = (const DbgCli_Command_FishAngle& src);  // assignment operator
+  DbgCli_Command_FishAngle(const DbgCli_Command_FishAngle& src);               // copy constructor
 };
 
 #define SERVOMIN  160 // this is the 'minimum' pulse length count (out of 4096)
@@ -55,10 +61,12 @@ private: // forbidden default functions
 
 FishHal::FishHal()
 : m_pwm(new Adafruit_PWMServoDriver())
-, m_dbgCmd(new HalDbgCmd_Angle(this))
+, m_dbgCliTopic(new DbgCli_Topic(DbgCli_Node::RootNode(), "hal", "Fish HAL test commands."))
 {
   m_pwm->begin();
   m_pwm->setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+
+  new DbgCli_Command_FishAngle(this, m_dbgCliTopic);
 }
 
 FishHal::~FishHal()

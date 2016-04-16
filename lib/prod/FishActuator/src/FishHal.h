@@ -9,7 +9,7 @@
 #define LIB_PROD_FISHACTUATOR_SRC_FISHHAL_H_
 
 class Adafruit_PWMServoDriver;
-class DbgCli_Command;
+class DbgCli_Topic;
 
 class FishHal
 {
@@ -25,7 +25,7 @@ public:
   void setAngle(unsigned int portId, int angle);
 private:
   Adafruit_PWMServoDriver* m_pwm;
-  DbgCli_Command* m_dbgCmd;
+  DbgCli_Topic* m_dbgCliTopic;
 
 private:  // forbidden functions
   FishHal(const FishHal& src);              // copy constructor
