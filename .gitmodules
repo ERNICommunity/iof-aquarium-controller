@@ -16,9 +16,6 @@
 [submodule "lib/plat/debug-trace"]
 	path = lib/plat/debug-trace
 	url = https://github.com/ERNICommunity/dbg-trace.git
-[submodule "lib/comp/CmdArduino"]
-	path = lib/comp/CmdArduino
-	url = https://github.com/dniklaus/CmdArduino.git
 [submodule "lib/comp/CmdSequence"]
 	path = lib/comp/CmdSequence
 	url = https://github.com/dniklaus/CmdSequence.git
