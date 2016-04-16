@@ -37,12 +37,12 @@ void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char
     Serial.print(country);
     Serial.print("/");
     Serial.println(city);
-    char triggerTopicString[100];
-    sprintf(triggerTopicString, "iof/%s/%s/sensor/aquarium-trigger", country, city);
+    size_t buffSize = 100;
+    char triggerTopicString[buffSize];
+    snprintf(triggerTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", country, city);
     Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
     Serial.println(triggerTopicString);
-    // TODO: MqttClient: configure "iof/<country>/<city>/sensor/aquarium-trigger"
-    //       as the topic to publish when the sensor is getting activated
+    m_mqttClient->setPublishInfo(country, city);
   }
 }
 

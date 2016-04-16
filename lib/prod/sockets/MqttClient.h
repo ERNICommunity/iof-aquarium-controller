@@ -50,6 +50,7 @@ public:
   void startupClient();
   void reconnect();
   void subscribe();
+  void setPublishInfo(const char* country, const char* city);
   void publishCapTouched();
   void loop();
 
@@ -58,8 +59,9 @@ private:
   MqttClientAdapter* m_adapter;
   PubSubClient* m_pubSubClient;
   Timer* m_mqttConnectTimer;
+  const char* m_clientCountry;
+  const char* m_clientCity;
   static const int s_reconnectInterval_ms;
-  static const char* capTouchedPayload;
 
 private:  // forbidden functions
   MqttClient(const MqttClient& src);              // copy constructor

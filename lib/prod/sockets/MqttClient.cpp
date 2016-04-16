@@ -5,6 +5,8 @@
  *      Author: scan
  */
 
+#include <Arduino.h>
+#include <stdio.h>
 #include <ESP8266WiFi.h>
 #include <FishActuator.h>
 #include <HardwareSerial.h>
@@ -18,7 +20,6 @@
 #include <WString.h>
 
 const int  MqttClient::s_reconnectInterval_ms = 1000;
-const char* MqttClient::capTouchedPayload = "true";
 
 
 //-----------------------------------------------------------------------------
@@ -54,6 +55,8 @@ MqttClient::MqttClient(const char* mqttServerDomain, unsigned short int mqttPort
 , m_adapter(adapter)
 , m_pubSubClient(new PubSubClient(mqttServerDomain, mqttPort, *(iofWifiClient->getClient())))
 , m_mqttConnectTimer(0)
+, m_clientCountry("")
+, m_clientCity("")
 { }
 
 MqttClient::~MqttClient()
@@ -161,25 +164,18 @@ void MqttClient::subscribe()
   }
 }
 
+void MqttClient::setPublishInfo(const char* country, const char* city)
+{
+  m_clientCountry = country;
+  m_clientCity = city;
+}
+
 void MqttClient::publishCapTouched()
 {
-  if (0 != m_adapter)
-  {
-    const char* macAddress = m_adapter->getMacAddr();
-
-    if (0 == strncmp(macAddress, "18:FE:34:DB:50:EF", 17))
-    {
-      m_pubSubClient->publish("iof/ch/berne/sensor/aquarium-trigger", capTouchedPayload);
-    }
-    else if (0 == strncmp(macAddress, "5C:CF:7F:07:5E:6A", 17))
-    {
-      m_pubSubClient->publish("iof/ch/zurich/sensor/aquarium-trigger", capTouchedPayload);
-    }
-    else if (0 == strncmp(macAddress, "18:FE:34:DB:4F:C5", 17))
-    {
-      m_pubSubClient->publish("iof/ch/baar/sensor/aquarium-trigger", capTouchedPayload);
-    }
-  }
+  size_t buffSize = 100;
+  char pubTopicString[buffSize];
+  snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_clientCountry, m_clientCity);
+  m_pubSubClient->publish(pubTopicString, m_clientCity);
 }
 
 void MqttClient::loop()
