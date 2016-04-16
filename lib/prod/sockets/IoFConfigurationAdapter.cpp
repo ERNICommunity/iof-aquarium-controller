@@ -33,14 +33,10 @@ void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char
 {
   if (0 != m_mqttClient)
   {
-    Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
-    Serial.print(country);
-    Serial.print("/");
-    Serial.println(city);
     size_t buffSize = 100;
     char triggerTopicString[buffSize];
     snprintf(triggerTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", country, city);
-    Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
+    Serial.print(F("IoF_ConfigurationAdapter::configureAquarium(): "));
     Serial.println(triggerTopicString);
     m_mqttClient->setPublishInfo(country, city);
   }

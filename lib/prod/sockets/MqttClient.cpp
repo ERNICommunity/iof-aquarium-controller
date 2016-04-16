@@ -176,6 +176,10 @@ void MqttClient::publishCapTouched()
   char pubTopicString[buffSize];
   snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_clientCountry, m_clientCity);
   m_pubSubClient->publish(pubTopicString, m_clientCity);
+  Serial.print(F("MQTT publish: "));
+  Serial.print(pubTopicString);
+  Serial.print(F(" payload: "));
+  Serial.println(m_clientCity);
 }
 
 void MqttClient::loop()
