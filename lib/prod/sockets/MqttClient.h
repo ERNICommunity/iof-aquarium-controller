@@ -61,6 +61,7 @@ private:
   MqttClientAdapter* m_adapter;
   PubSubClient* m_pubSubClient;
   Timer* m_mqttConnectTimer;
+  bool m_wasConnectedBefore;
   const char* m_clientCountry;
   const char* m_clientCity;
   static const int s_reconnectInterval_ms;

@@ -55,6 +55,7 @@ MqttClient::MqttClient(const char* mqttServerDomain, unsigned short int mqttPort
 , m_adapter(adapter)
 , m_pubSubClient(new PubSubClient(mqttServerDomain, mqttPort, *(iofWifiClient->getClient())))
 , m_mqttConnectTimer(0)
+, m_wasConnectedBefore(false)
 , m_clientCountry("")
 , m_clientCity("")
 { }
@@ -99,43 +100,50 @@ void MqttClient::startupClient()
 
 void MqttClient::reconnect()
 {
-  if ((0 != m_adapter) && (WL_CONNECTED == WiFi.status()) && (!m_pubSubClient->connected()))
+  if ((0 != m_adapter) && (WL_CONNECTED == WiFi.status()))
   {
     const char* macAddress = m_adapter->getMacAddr();
-
-    Serial.print("Attempting MQTT connection, ID is MAC Address: ");
-    Serial.print(macAddress);
-    Serial.print(" ... ");
-    // Attempt to connect
-    if (m_pubSubClient->connect(macAddress))
+    bool currentlyConnected = m_pubSubClient->connected();
+    if (m_wasConnectedBefore != currentlyConnected)
     {
-      Serial.println("connected");
-      //TODO delay needed?
-      delay(5000);
-      // resubscribe
-      subscribeToConfigTopic(macAddress);
-      delay(500);
-      subscribeToAquariumTopic();
-      //TODO when to publish a config request? Only at startup or at every reconnection?
-      publishConfigID(macAddress);
+      // connection state changed
+      m_wasConnectedBefore = currentlyConnected;
+      if (currentlyConnected)
+      {
+        // ... to connected
+        Serial.println("connected");
+        loop();
+        subscribeToConfigTopic(macAddress);
+        loop();
+        subscribeToAquariumTopic();
+        //TODO when to publish a config request? Only at startup or at every reconnection?
+  //      publishConfigID(macAddress);
+      }
+      else
+      {
+        int state = m_pubSubClient->state();
+        Serial.print("MQTT connection failed, state: ");
+        Serial.print(state == MQTT_CONNECTION_TIMEOUT      ? "CONNECTION_TIMEOUT"      :
+                     state == MQTT_CONNECTION_LOST         ? "CONNECTION_LOST"         :
+                     state == MQTT_CONNECT_FAILED          ? "CONNECT_FAILED"          :
+                     state == MQTT_DISCONNECTED            ? "DISCONNECTED"            :
+                     state == MQTT_CONNECTED               ? "CONNECTED"               :
+                     state == MQTT_CONNECT_BAD_PROTOCOL    ? "CONNECT_BAD_PROTOCOL"    :
+                     state == MQTT_CONNECT_BAD_CLIENT_ID   ? "CONNECT_BAD_CLIENT_ID"   :
+                     state == MQTT_CONNECT_UNAVAILABLE     ? "CONNECT_UNAVAILABLE"     :
+                     state == MQTT_CONNECT_BAD_CREDENTIALS ? "CONNECT_BAD_CREDENTIALS" :
+                     state == MQTT_CONNECT_UNAUTHORIZED    ? "CONNECT_UNAUTHORIZED"    : "UNKNOWN");
+      }
     }
-    else
+    if (!currentlyConnected)
     {
-      int state = m_pubSubClient->state();
-      Serial.print("failed, state: ");
-      Serial.print(state == MQTT_CONNECTION_TIMEOUT      ? "CONNECTION_TIMEOUT"      :
-                   state == MQTT_CONNECTION_LOST         ? "CONNECTION_LOST"         :
-                   state == MQTT_CONNECT_FAILED          ? "CONNECT_FAILED"          :
-                   state == MQTT_DISCONNECTED            ? "DISCONNECTED"            :
-                   state == MQTT_CONNECTED               ? "CONNECTED"               :
-                   state == MQTT_CONNECT_BAD_PROTOCOL    ? "CONNECT_BAD_PROTOCOL"    :
-                   state == MQTT_CONNECT_BAD_CLIENT_ID   ? "CONNECT_BAD_CLIENT_ID"   :
-                   state == MQTT_CONNECT_UNAVAILABLE     ? "CONNECT_UNAVAILABLE"     :
-                   state == MQTT_CONNECT_BAD_CREDENTIALS ? "CONNECT_BAD_CREDENTIALS" :
-                   state == MQTT_CONNECT_UNAUTHORIZED    ? "CONNECT_UNAUTHORIZED"    : "UNKNOWN");
-      Serial.print(", will try again in ");
-      Serial.print(s_reconnectInterval_ms / 1000);
-      Serial.println(" second(s)");
+      // currently not connected => try to connect
+      Serial.println();
+      Serial.print("Attempting MQTT connection, ID is MAC Address: ");
+      Serial.print(macAddress);
+      Serial.print(" ... ");
+      // Attempt to connect
+      m_pubSubClient->connect(macAddress);
     }
   }
 }
