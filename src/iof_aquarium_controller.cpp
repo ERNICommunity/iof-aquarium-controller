@@ -158,31 +158,31 @@ public:
 //-----------------------------------------------------------------------------
 void callback(char* topic, byte* payload, unsigned int length)
 {
+  char msg[length+1];
+  memcpy(msg, payload, length);
+  msg[length] = 0;
   Serial.print(F("Message arrived ["));
   Serial.print(topic);
   Serial.print(F("] "));
-  for (int i = 0; i < length; i++)
-  {
-    Serial.print((char) payload[i]);
-  }
-  Serial.println();
+  Serial.println(msg);
 
   if (0 == strncmp(topic, "iof/config", strlen("iof/config")))
   {
     Serial.println(F("Config received!"));
     if (0 != cfg)
     {
-      cfg->setConfig((char*)payload);
+      cfg->setConfig(msg, length+1);
     }
   }
   else
   {
     // check if received topic ends with expected aquarium trigger
-    if (0 == strncmp(topic + strlen(topic) - strlen(PUBLISH_SUFFIX), PUBLISH_SUFFIX, strlen(PUBLISH_SUFFIX)))
+    if (0 != strstr(topic, PUBLISH_SUFFIX))
     {
-      unsigned int fishId = 1000;
-      //TODO: get Fish ID from payload
-      // e.g. fishId = cfg->getFishId((char*)payload);
+      // get Fish ID from payload
+      Serial.print(F("Aquarium trigger event received! activate fish for: "));
+      Serial.println(msg);
+      unsigned int fishId = cfg->getFishId(msg);
       if ((0 != fishActuator) && (fishId != 1000))
       {
         Serial.print(F("Aquarium trigger event received! activate fish ID: "));
