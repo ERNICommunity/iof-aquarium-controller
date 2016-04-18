@@ -49,6 +49,8 @@ public:
 //-----------------------------------------------------------------------------
 // MQTT Client
 //-----------------------------------------------------------------------------
+const unsigned int MqttClient::s_maxCountrySize = 5;
+const unsigned int MqttClient::s_maxCitySize = 20;
 
 MqttClient::MqttClient(const char* mqttServerDomain, unsigned short int mqttPort, IoF_WiFiClient* iofWifiClient, MqttClientAdapter* adapter)
 : m_iofWifiClient(iofWifiClient)
@@ -56,9 +58,12 @@ MqttClient::MqttClient(const char* mqttServerDomain, unsigned short int mqttPort
 , m_pubSubClient(new PubSubClient(mqttServerDomain, mqttPort, *(iofWifiClient->getClient())))
 , m_mqttConnectTimer(0)
 , m_wasConnectedBefore(false)
-, m_clientCountry("")
-, m_clientCity("")
-{ }
+, m_clientCountry(new char[s_maxCountrySize])
+, m_clientCity(new char[s_maxCitySize])
+{
+  memset(m_clientCountry, 0, s_maxCountrySize);
+  memset(m_clientCity, 0, s_maxCitySize);
+}
 
 MqttClient::~MqttClient()
 {
@@ -68,6 +73,10 @@ MqttClient::~MqttClient()
   m_pubSubClient = 0;
   delete m_mqttConnectTimer;
   m_mqttConnectTimer = 0;
+  delete m_clientCountry;
+  m_clientCountry = 0;
+  delete m_clientCity;
+  m_clientCity = 0;
 }
 
 void MqttClient::attachAdapter(MqttClientAdapter* adapter)
@@ -180,8 +189,8 @@ void MqttClient::publishConfigID(const char* macAddress)
 
 void MqttClient::setPublishInfo(const char* country, const char* city)
 {
-  m_clientCountry = country;
-  m_clientCity = city;
+  strncpy(m_clientCountry, country, s_maxCountrySize);
+  strncpy(m_clientCity, city, s_maxCitySize);
 }
 
 void MqttClient::publishCapTouched()

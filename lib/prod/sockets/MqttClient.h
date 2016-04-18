@@ -62,8 +62,10 @@ private:
   PubSubClient* m_pubSubClient;
   Timer* m_mqttConnectTimer;
   bool m_wasConnectedBefore;
-  const char* m_clientCountry;
-  const char* m_clientCity;
+  char* m_clientCountry;
+  char* m_clientCity;
+  static const unsigned int s_maxCountrySize;
+  static const unsigned int s_maxCitySize;
   static const int s_reconnectInterval_ms;
 
 private:  // forbidden functions

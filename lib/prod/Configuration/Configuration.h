@@ -60,6 +60,8 @@ public:
 private:
   ConfigurationAdapter* m_adapter;
   char* m_json;
+  unsigned int m_jsonSize;
+  static const unsigned int s_maxJsonSize;
 
 private:  // forbidden functions
   Configuration(const Configuration& src);              // copy constructor

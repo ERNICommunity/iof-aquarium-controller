@@ -14,11 +14,14 @@ using namespace ArduinoJson;
 
 #include "Configuration.h"
 
+const unsigned int Configuration::s_maxJsonSize = 512;
+
 Configuration::Configuration(ConfigurationAdapter* adapter)
 : m_adapter(adapter)
-, m_json(new char[512])
+, m_json(new char[s_maxJsonSize])
+, m_jsonSize(s_maxJsonSize)
 {
-  memset(m_json, 0, 512);
+  memset(m_json, 0, s_maxJsonSize);
 }
 
 Configuration::~Configuration()
@@ -29,11 +32,13 @@ Configuration::~Configuration()
 
 void Configuration::setConfig(char json[], unsigned int jsonSize)
 {
-  memcpy(m_json, json, jsonSize);
+  m_jsonSize = jsonSize;
+  strncpy(m_json, json, jsonSize);
+
   if (0 != m_adapter)
   {
     DynamicJsonBuffer jsonBuffer;
-    JsonObject& jsonObjectRoot = jsonBuffer.parseObject(m_json);
+    JsonObject& jsonObjectRoot = jsonBuffer.parseObject(json);
 
     const char* aquariumId = jsonObjectRoot["aquarium-id"];
     Serial.print("JSON aquarium-id: ");
@@ -77,7 +82,11 @@ void Configuration::setConfig(char json[], unsigned int jsonSize)
 
 unsigned int Configuration::getFishId(char* city)
 {
-  Serial.println("Configuration::getFishId()");
+  char json[m_jsonSize];
+  strncpy(json, m_json, m_jsonSize);
+
+  Serial.print("Configuration::getFishId(), config json: ");
+  Serial.println(m_json);
   unsigned int retFishId = 1000;
   bool foundCity = false;
   DynamicJsonBuffer jsonBuffer;
