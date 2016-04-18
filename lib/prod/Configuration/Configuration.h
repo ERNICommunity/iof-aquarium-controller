@@ -53,11 +53,13 @@ public:
 
   void attachAdapter(ConfigurationAdapter* adapter);
 
-  void setConfig(char json[]);
+  void setConfig(char json[], unsigned int jsonSize);
+
+  unsigned int getFishId(char* city);
 
 private:
   ConfigurationAdapter* m_adapter;
-  DynamicJsonBuffer* m_jsonBuffer;
+  char* m_json;
 
 private:  // forbidden functions
   Configuration(const Configuration& src);              // copy constructor
