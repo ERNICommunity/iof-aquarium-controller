@@ -28,6 +28,12 @@ public:
    */
   virtual const char* getMacAddr() = 0;
 
+  /**
+   * Get information if the device already has received a configuration
+   * @ return isConfigured returns true if the device has already received a configuration
+   */
+  virtual bool isConfigured() const = 0;
+
 protected:
   MqttClientAdapter() { }
 private:  // forbidden functions

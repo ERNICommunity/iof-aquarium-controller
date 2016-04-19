@@ -125,8 +125,12 @@ void MqttClient::reconnect()
         subscribeToConfigTopic(macAddress);
         loop();
         subscribeToAquariumTopic();
-        //TODO when to publish a config request? Only at startup or at every reconnection?
-  //      publishConfigID(macAddress);
+        loop();
+        if (m_adapter->isConfigured())
+        {
+          // request configuration, only at startup - not at every reconnection of the client
+          publishConfigID(macAddress);
+        }
       }
       else
       {

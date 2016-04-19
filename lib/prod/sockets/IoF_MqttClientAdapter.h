@@ -11,17 +11,20 @@
 #include <MqttClient.h>
 
 class IoF_WiFiClient;
+class Configuration;
 
 class IoF_MqttClientAdapter: public MqttClientAdapter
 {
 public:
-  IoF_MqttClientAdapter(IoF_WiFiClient* wifiClient);
+  IoF_MqttClientAdapter(IoF_WiFiClient* wifiClient, Configuration* configuration);
   virtual ~IoF_MqttClientAdapter();
 
   const char* getMacAddr();
+  bool isConfigured() const;
 
 private:
   IoF_WiFiClient* m_wifiClient;
+  Configuration* m_configuration;
 
 private:  // forbidden functions
   IoF_MqttClientAdapter();

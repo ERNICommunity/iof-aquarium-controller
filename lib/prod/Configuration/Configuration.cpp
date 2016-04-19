@@ -20,6 +20,7 @@ Configuration::Configuration(ConfigurationAdapter* adapter)
 : m_adapter(adapter)
 , m_json(new char[s_maxJsonSize])
 , m_jsonSize(s_maxJsonSize)
+, m_isConfigured(false)
 {
   memset(m_json, 0, s_maxJsonSize);
 }
@@ -76,6 +77,7 @@ void Configuration::setConfig(char json[], unsigned int jsonSize)
       Serial.print("/");
       Serial.println(city);
       m_adapter->configureAquarium(country, city);
+      m_isConfigured = true;
     }
   }
 }

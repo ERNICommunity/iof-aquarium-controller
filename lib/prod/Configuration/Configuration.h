@@ -62,6 +62,8 @@ public:
    */
   unsigned int getFishId(const char* city) const;
 
+  bool isConfigured() const {return m_isConfigured; }
+
 public:
   static const unsigned int FISH_ID_INVALID;   ///
 
@@ -70,6 +72,7 @@ private:
   char* m_json;
   unsigned int m_jsonSize;
   static const unsigned int s_maxJsonSize;
+  bool m_isConfigured;
 
 private:  // forbidden functions
   Configuration(const Configuration& src);              // copy constructor
