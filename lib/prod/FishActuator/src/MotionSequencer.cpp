@@ -78,7 +78,7 @@ MotionSequencer::MotionSequencer(FishCollection* collection, unsigned long cmdTi
   {
     for (unsigned int i = 0; i < 15; i++)
     {
-      hal->setAngle(0, i);
+      hal->setAngle(i, 0);
     }
   }
   prepareSequence();
