@@ -55,7 +55,15 @@ public:
 
   void setConfig(char json[], unsigned int jsonSize);
 
-  unsigned int getFishId(char* city);
+  /**
+   * Get Fish ID by the assigned city.
+   * @param city City string addressing the fish to be looked up.
+   * @return fishId Fish ID assigned to the city {1..N}, FISH_ID_INVALID if not found.
+   */
+  unsigned int getFishId(const char* city) const;
+
+public:
+  static const unsigned int FISH_ID_INVALID;   ///
 
 private:
   ConfigurationAdapter* m_adapter;

@@ -80,17 +80,19 @@ void Configuration::setConfig(char json[], unsigned int jsonSize)
   }
 }
 
-unsigned int Configuration::getFishId(char* city)
+const unsigned int Configuration::FISH_ID_INVALID = 0;
+
+unsigned int Configuration::getFishId(const char* city) const
 {
   char json[m_jsonSize];
   strncpy(json, m_json, m_jsonSize);
 
   Serial.print("Configuration::getFishId(), config json: ");
-  Serial.println(m_json);
-  unsigned int retFishId = 1000;
+  Serial.println(json);
+  unsigned int retFishId = FISH_ID_INVALID;
   bool foundCity = false;
   DynamicJsonBuffer jsonBuffer;
-  JsonObject& jsonObjectRoot = jsonBuffer.parseObject(m_json);
+  JsonObject& jsonObjectRoot = jsonBuffer.parseObject(json);
   JsonArray& fishMapping = jsonObjectRoot["fish-mapping"];
   for (unsigned int i = 0; ((i < fishMapping.size()) && !foundCity); i++)
   {

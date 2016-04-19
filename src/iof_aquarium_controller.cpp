@@ -183,11 +183,11 @@ void callback(char* topic, byte* payload, unsigned int length)
       Serial.print(F("Aquarium trigger event received! activate fish for: "));
       Serial.println(msg);
       unsigned int fishId = cfg->getFishId(msg);
-      if ((0 != fishActuator) && (fishId != 1000))
+      if ((0 != fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
       {
         Serial.print(F("Aquarium trigger event received! activate fish ID: "));
-        Serial.println(fishId);
-        fishActuator->activateFish(fishId);
+        Serial.println(fishId-1);
+        fishActuator->activateFish(fishId-1);
       }
     }
   }
