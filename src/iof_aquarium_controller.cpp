@@ -187,7 +187,7 @@ void callback(char* topic, byte* payload, unsigned int length)
       {
         Serial.print(F("Aquarium trigger event received! activate fish ID: "));
         Serial.println(fishId-1);
-        fishActuator->activateFish(fishId-1);
+        fishActuator->activateFish(fishId);
       }
     }
   }

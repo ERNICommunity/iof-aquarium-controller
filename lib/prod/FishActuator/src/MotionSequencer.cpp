@@ -76,7 +76,7 @@ MotionSequencer::MotionSequencer(FishCollection* collection, unsigned long cmdTi
   FishHal* hal = m_collection->hal();
   if (0 != hal)
   {
-    for (unsigned int i = 0; i < 15; i++)
+    for (unsigned int i = 1; i <= 16; i++)
     {
       hal->setAngle(i, 0);
     }

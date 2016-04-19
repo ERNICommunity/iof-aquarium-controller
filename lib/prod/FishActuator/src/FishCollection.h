@@ -35,7 +35,7 @@ public:
 
   /**
    * Get the Fish object pointer of the Fish object having the provided HW ID.
-   * @param fishHwId Fish Hardware Id {0..n-1}, n = 992
+   * @param fishHwId Fish Hardware Id {1..n}, n = 992
    * @return matchingFish Pointer to the matching Fish object, null pointer if not found
    */
   Fish* findFishByHwId(unsigned int fishHwId);

@@ -18,7 +18,7 @@ class Fish
 public:
   /**
    * Constructor.
-   * @param fishHwId Fish Hardware Id {0..n-1}
+   * @param fishHwId Fish Hardware Id {1..n}
    * @param collection Pointer to FishCollection object.
    */
   Fish(unsigned int fishHwId, FishCollection* collection);
@@ -35,7 +35,7 @@ public:
 
   /**
    * Get the Fish HW ID.
-   * @return fishHwId Fish Hardware Id {0..n-1}
+   * @return fishHwId Fish Hardware Id {1..n}
    */
   unsigned int getFishHwId();
 

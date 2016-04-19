@@ -19,10 +19,11 @@ public:
 
   /**
    * Set a particular angle the Servo shall be set to.
-   * @param portId Port ID {0..n-1}
+   * @param portId Port ID {1..n} n = 992
    * @param angle Angle to be set {-90 .. 90}
    */
   void setAngle(unsigned int portId, int angle);
+
 private:
   Adafruit_PWMServoDriver* m_pwm;
   DbgCli_Topic* m_dbgCliTopic;

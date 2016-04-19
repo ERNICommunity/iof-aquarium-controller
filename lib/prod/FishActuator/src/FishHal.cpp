@@ -44,7 +44,7 @@ public:
 private:
   void printUsage()
   {
-    Serial.println("dbg hal ang - usage: <portId> {0..15} <angle> {-90 .. 90}");
+    Serial.println("dbg hal ang - usage: <portId> {1..992} <angle> {-90 .. 90}");
   }
 
 private:
@@ -76,6 +76,6 @@ void FishHal::setAngle(unsigned int portId, int angle)
 {
   int angleBiased = angle + 90;
   int pulselen = map(angleBiased, 0, 180, SERVOMIN, SERVOMAX);
-  m_pwm->setPWM(portId, 0, pulselen);
+  m_pwm->setPWM(portId-1, 0, pulselen);
 }
 
