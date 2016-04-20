@@ -89,30 +89,25 @@ unsigned int Configuration::getFishId(const char* city) const
   char json[m_jsonSize];
   strncpy(json, m_json, m_jsonSize);
 
-  Serial.print("Configuration::getFishId(), config json: ");
-  Serial.println(json);
   unsigned int retFishId = FISH_ID_INVALID;
   bool foundCity = false;
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& jsonObjectRoot = jsonBuffer.parseObject(json);
-  JsonArray& fishMapping = jsonObjectRoot["fish-mapping"];
-  for (unsigned int i = 0; ((i < fishMapping.size()) && !foundCity); i++)
+  if (isConfigured())
   {
-    JsonObject& fish     = fishMapping[i];
-    unsigned int fishId  = fish["fish-id"];
-    JsonObject& office   = fish["office"];
-    const char* country  = office["country"];
-    const char* fishCity = office["city"];
-    Serial.print("JSON fish-id: ");
-    Serial.print(fishId);
-    Serial.print(", ");
-    Serial.print(country);
-    Serial.print("/");
-    Serial.println(fishCity);
-    foundCity = (0 == strncmp(city, fishCity, strlen(fishCity)));
-    if (foundCity)
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& jsonObjectRoot = jsonBuffer.parseObject(json);
+    JsonArray& fishMapping = jsonObjectRoot["fish-mapping"];
+    for (unsigned int i = 0; ((i < fishMapping.size()) && !foundCity); i++)
     {
-      retFishId = fishId;
+      JsonObject& fish     = fishMapping[i];
+      unsigned int fishId  = fish["fish-id"];
+      JsonObject& office   = fish["office"];
+      const char* country  = office["country"];
+      const char* fishCity = office["city"];
+      foundCity = (0 == strncmp(city, fishCity, strlen(fishCity)));
+      if (foundCity)
+      {
+        retFishId = fishId;
+      }
     }
   }
   return retFishId;
