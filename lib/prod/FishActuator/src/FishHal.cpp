@@ -57,7 +57,7 @@ private: // forbidden default functions
 };
 
 #define SERVOMIN  160 // this is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  570 // this is the 'maximum' pulse length count (out of 4096)
+#define SERVOMAX  555 // this is the 'maximum' pulse length count (out of 4096)
 
 FishHal::FishHal()
 : m_pwm(new Adafruit_PWMServoDriver())
