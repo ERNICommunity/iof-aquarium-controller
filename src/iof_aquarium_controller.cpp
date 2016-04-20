@@ -37,7 +37,7 @@ Configuration* cfg = 0;
 //-----------------------------------------------------------------------------
 void dbgCliExecute()
 {
-  if (0 != DbgCli_Node::RootNode())
+  if ((0 != sCmd) && (0 != DbgCli_Node::RootNode()))
   {
     const unsigned int firstArgToHandle = 1;
     const unsigned int maxArgCnt = 10;
@@ -57,7 +57,10 @@ void dbgCliExecute()
 void sayHello()
 {
   char *arg;
-  arg = sCmd->next();    // Get the next argument from the SerialCommand object buffer
+  if (0 != sCmd)
+  {
+    arg = sCmd->next();    // Get the next argument from the SerialCommand object buffer
+  }
   if (arg != NULL)       // As long as it exists, take it
   {
     Serial.print("Hello ");
@@ -141,7 +144,10 @@ public:
     {
       // now it is time to do something
       Serial.println("Touch down!");
-      mqttClient->publishCapTouched();
+      if (0 != mqttClient)
+      {
+        mqttClient->publishCapTouched();
+      }
     }
     if (0 != (currentTouchValue & 1<<7))
     {
@@ -186,7 +192,7 @@ void callback(char* topic, byte* payload, unsigned int length)
       if ((0 != fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
       {
         Serial.print(F("Aquarium trigger event received! activate fish ID: "));
-        Serial.println(fishId-1);
+        Serial.println(fishId);
         fishActuator->activateFish(fishId);
       }
     }
@@ -204,9 +210,12 @@ void setup()
   DbgCli_Node::AssignRootNode(new DbgCli_Topic(0, "dbg", "Internet of Fish Aquarium Controller Debug CLI Root Node."));
 
   // Setup callbacks for SerialCommand commands
-  sCmd->addCommand("hello", sayHello);        // Echos the string argument back
-  sCmd->addCommand("dbg", dbgCliExecute);
-  sCmd->setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
+  if (0 != sCmd)
+  {
+    sCmd->addCommand("dbg", dbgCliExecute);
+    sCmd->addCommand("hello", sayHello);        // Echos the string argument back
+    sCmd->setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
+  }
 
   Serial.println();
   Serial.println(F("---------------------------------------------"));
@@ -225,7 +234,11 @@ void setup()
   // WiFi Connection
   //-----------------------------------------------------------------------------
   wifiClient = new IoF_WiFiClient(WIFI_SSID, WIFI_PWD);
-  wifiClient->begin();
+
+  if (0 != wifiClient)
+  {
+    wifiClient->begin();
+  }
 
   //---------------------------------------------------------------------------
   // Fish Actuator
@@ -235,25 +248,39 @@ void setup()
   //---------------------------------------------------------------------------
   // Capacitive Sensor
   //---------------------------------------------------------------------------
-  CapSensor* capSensor = new CapSensor(new MyCapSensorAdatper(fishActuator, 0));
+  new CapSensor(new MyCapSensorAdatper(fishActuator, 0));
 
   //-----------------------------------------------------------------------------
   // MQTT Client
   //-----------------------------------------------------------------------------
-  mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient, new IoF_MqttClientAdapter(wifiClient, cfg));
-  mqttClient->setCallback(callback);
-  mqttClient->startupClient();
+  mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient);
+  if (0 != mqttClient)
+  {
+    mqttClient->setCallback(callback);
+    mqttClient->startupClient();
+  }
 
   //-----------------------------------------------------------------------------
   // Configuration
   //-----------------------------------------------------------------------------
   cfg = new Configuration(new IoF_ConfigurationAdapter(wifiClient, mqttClient, fishActuator));
+
+  if ((0 != mqttClient) && (0 != cfg))
+  {
+    mqttClient->attachAdapter(new IoF_MqttClientAdapter(wifiClient, cfg));
+  }
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
-  mqttClient->loop();     // process MQTT protocol
-  sCmd->readSerial();     // process serial commands
+  if (0 != mqttClient)
+  {
+    mqttClient->loop();     // process MQTT protocol
+  }
+  if (0 != sCmd)
+  {
+    sCmd->readSerial();     // process serial commands
+  }
   yield();                // process Timer expiration evaluation
 }

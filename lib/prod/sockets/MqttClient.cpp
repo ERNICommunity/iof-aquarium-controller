@@ -109,9 +109,8 @@ void MqttClient::startupClient()
 
 void MqttClient::reconnect()
 {
-  if ((0 != m_adapter) && (WL_CONNECTED == WiFi.status()))
+  if (0 != m_adapter)
   {
-    const char* macAddress = m_adapter->getMacAddr();
     bool currentlyConnected = m_pubSubClient->connected();
     if (m_wasConnectedBefore != currentlyConnected)
     {
@@ -122,14 +121,15 @@ void MqttClient::reconnect()
         // ... to connected
         Serial.println("connected");
         loop();
-        subscribeToConfigTopic(macAddress);
+        subscribeToConfigTopic();
         loop();
         subscribeToAquariumTopic();
         loop();
-        if (m_adapter->isConfigured())
+        if (!m_adapter->isConfigured())
         {
           // request configuration, only at startup - not at every reconnection of the client
-          publishConfigID(macAddress);
+          loop();
+          publishConfigID();
         }
       }
       else
@@ -148,23 +148,26 @@ void MqttClient::reconnect()
                      state == MQTT_CONNECT_UNAUTHORIZED    ? "CONNECT_UNAUTHORIZED"    : "UNKNOWN");
       }
     }
-    if (!currentlyConnected)
+    if ((WL_CONNECTED == WiFi.status()) && (!currentlyConnected))
     {
       // currently not connected => try to connect
+      const char* macAddress = m_adapter->getMacAddr();
       Serial.println();
       Serial.print("Attempting MQTT connection, ID is MAC Address: ");
       Serial.print(macAddress);
       Serial.print(" ... ");
       // Attempt to connect
       m_pubSubClient->connect(macAddress);
+      loop();
     }
   }
 }
 
-void MqttClient::subscribeToConfigTopic(const char* macAddress)
+void MqttClient::subscribeToConfigTopic()
 {
-  if (0 != m_pubSubClient)
+  if ((0 != m_pubSubClient) && (0 != m_adapter))
   {
+    const char* macAddress = m_adapter->getMacAddr();
     size_t buffSize = 100;
     char configTopicString[buffSize];
     snprintf(configTopicString, buffSize, "iof/config/%s", macAddress);
@@ -182,10 +185,15 @@ void MqttClient::subscribeToAquariumTopic()
   }
 }
 
-void MqttClient::publishConfigID(const char* macAddress)
+void MqttClient::publishConfigID()
 {
-  if (0 != m_pubSubClient)
+  if ((0 != m_pubSubClient) && (0 != m_adapter))
   {
+    const char* macAddress = m_adapter->getMacAddr();
+    Serial.print("MQTT publish: ");
+    Serial.print("iof/config");
+    Serial.print(F(" payload: "));
+    Serial.println(macAddress);
     m_pubSubClient->publish("iof/config", macAddress);
     loop();
   }
@@ -199,20 +207,23 @@ void MqttClient::setPublishInfo(const char* country, const char* city)
 
 void MqttClient::publishCapTouched()
 {
-  if (0 != m_pubSubClient)
+  if ((0 != m_pubSubClient) && (0 != m_adapter))
   {
-    size_t buffSize = 100;
-    char pubTopicString[buffSize];
-    snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_clientCountry, m_clientCity);
-    m_pubSubClient->publish(pubTopicString, m_clientCity);
-    Serial.print(F("MQTT publish: "));
-    Serial.print(pubTopicString);
-    Serial.print(F(" payload: "));
-    Serial.println(m_clientCity);
+    if (m_adapter->isConfigured())
+    {
+      size_t buffSize = 100;
+      char pubTopicString[buffSize];
+      snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_clientCountry, m_clientCity);
+      m_pubSubClient->publish(pubTopicString, m_clientCity);
+      loop();
+    }
   }
 }
 
 void MqttClient::loop()
 {
-  m_pubSubClient->loop();
+  if (0 != m_pubSubClient)
+  {
+    m_pubSubClient->loop();
+  }
 }
