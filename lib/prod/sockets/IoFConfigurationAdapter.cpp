@@ -44,8 +44,8 @@ void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char
 
 void IoF_ConfigurationAdapter::configureFish(unsigned int fishHwId, const char* country, const char* city)
 {
-  if (!m_fishActuator->isFishConfigured(fishHwId-1))
+  if (!m_fishActuator->isFishConfigured(fishHwId))
   {
-    m_fishActuator->addFishAtHwId(fishHwId-1);
+    m_fishActuator->addFishAtHwId(fishHwId);
   }
 }
