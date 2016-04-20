@@ -39,9 +39,6 @@ public:
     else
     {
       unsigned int hwId = atoi(args[idxToFirstArgToHandle]);
-      Serial.print("DbgCli_Command_AddFish, addFishAtHwId(");
-      Serial.print(hwId);
-      Serial.println(")");
       m_fishActuator->addFishAtHwId(hwId);
     }
   }
@@ -73,9 +70,6 @@ public:
     else
     {
       unsigned int hwId = atoi(args[idxToFirstArgToHandle]);
-      Serial.print("DbgCli_Command_DelFish, delFishAtHwId(");
-      Serial.print(hwId);
-      Serial.println(")");
       m_fishActuator->delFishAtHwId(hwId);
     }
   }
