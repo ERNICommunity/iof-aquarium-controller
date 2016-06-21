@@ -3,11 +3,13 @@
 #include <CapSensor.h>
 #include <Timer.h>
 #include <TimerContext.h>
+#include <CmdHandler.h>
 #include <DbgCliNode.h>
 #include <DbgCliTopic.h>
 #include <IoF_WiFiClient.h>
 #include <IoF_MqttClientAdapter.h>
 #include <MqttClient.h>
+#include <PubSubClient.h>
 #include <FishHal.h>
 #include <FishActuator.h>
 #include <Adafruit_CAP1188.h>
@@ -43,7 +45,7 @@ void dbgCliExecute()
     const unsigned int firstArgToHandle = 1;
     const unsigned int maxArgCnt = 10;
     char* args[maxArgCnt];
-    char* arg = "dbg";
+    char* arg = const_cast<char*>("dbg");
     unsigned int arg_cnt = 0;
     while ((maxArgCnt > arg_cnt) && (0 != arg))
     {
@@ -234,7 +236,7 @@ void setup()
   //-----------------------------------------------------------------------------
   // WiFi Connection
   //-----------------------------------------------------------------------------
-  wifiClient = new IoF_WiFiClient(WIFI_SSID, WIFI_PWD);
+  wifiClient = new IoF_WiFiClient(const_cast<char*>(WIFI_SSID), const_cast<char*>(WIFI_PWD));
 
   if (0 != wifiClient)
   {
