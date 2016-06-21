@@ -1,0 +1,18 @@
+[submodule "lib/CmdSequence"]
+	path = lib/CmdSequence
+	url = https://github.com/dniklaus/CmdSequence.git
+[submodule "lib/Adafruit_CAP1188_Library"]
+	path = lib/Adafruit_CAP1188_Library
+	url = https://github.com/dniklaus/Adafruit_CAP1188_Library.git
+[submodule "lib/Adafruit-PWM-Servo-Driver-Library"]
+	path = lib/Adafruit-PWM-Servo-Driver-Library
+	url = https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.git
+[submodule "lib/timer"]
+	path = lib/timer
+	url = https://github.com/dniklaus/arduino-utils-timer.git
+[submodule "lib/dbg-trace"]
+	path = lib/dbg-trace
+	url = https://github.com/ERNICommunity/dbg-trace.git
+[submodule "lib/dbg-cli"]
+	path = lib/dbg-cli
+	url = https://github.com/ERNICommunity/debug-cli.git

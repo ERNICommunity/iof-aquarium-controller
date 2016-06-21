@@ -1,6 +1,4 @@
-// Do not remove the include below
-#include "iof_aquarium_controller.h"
-
+#include <Arduino.h>
 #include <Wire.h>
 #include <CapSensor.h>
 #include <Timer.h>
@@ -10,7 +8,10 @@
 #include <IoF_WiFiClient.h>
 #include <IoF_MqttClientAdapter.h>
 #include <MqttClient.h>
+#include <FishHal.h>
 #include <FishActuator.h>
+#include <Adafruit_CAP1188.h>
+#include <Adafruit_PWMServoDriver.h>
 #include <SerialCommand.h>
 #include <Configuration.h>
 #include <IoFConfigurationAdapter.h>
