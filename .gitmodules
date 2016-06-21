@@ -1,6 +1,3 @@
 [submodule "lib/comp/SerialCommand"]
 	path = lib/comp/SerialCommand
 	url = https://github.com/kroimon/Arduino-SerialCommand.git
-[submodule "lib/comp/pubsubclient"]
-	path = lib/comp/pubsubclient
-	url = https://github.com/uberdriven/pubsubclient.git
