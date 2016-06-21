@@ -4,9 +4,6 @@
 [submodule "lib/comp/Adafruit_CAP1188_Library"]
 	path = lib/comp/Adafruit_CAP1188_Library
 	url = https://github.com/dniklaus/Adafruit_CAP1188_Library.git
-[submodule "lib/plat/debug-cli"]
-	path = lib/plat/debug-cli
-	url = https://github.com/ERNICommunity/debug-cli.git
 [submodule "lib/plat/debug-trace"]
 	path = lib/plat/debug-trace
 	url = https://github.com/ERNICommunity/dbg-trace.git
