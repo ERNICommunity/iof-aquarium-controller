@@ -1,9 +1,6 @@
 [submodule "lib/comp/Adafruit_PWM_Servo_Driver_Library"]
 	path = lib/comp/Adafruit_PWM_Servo_Driver_Library
 	url = https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.git
-[submodule "lib/comp/Adafruit_CAP1188_Library"]
-	path = lib/comp/Adafruit_CAP1188_Library
-	url = https://github.com/dniklaus/Adafruit_CAP1188_Library.git
 [submodule "lib/comp/CmdSequence"]
 	path = lib/comp/CmdSequence
 	url = https://github.com/dniklaus/CmdSequence.git
