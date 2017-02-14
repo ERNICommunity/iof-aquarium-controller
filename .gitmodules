@@ -1,9 +1,6 @@
 [submodule "lib/CmdSequence"]
 	path = lib/CmdSequence
 	url = https://github.com/dniklaus/CmdSequence.git
-[submodule "lib/Adafruit-PWM-Servo-Driver-Library"]
-	path = lib/Adafruit-PWM-Servo-Driver-Library
-	url = https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.git
 [submodule "lib/timer"]
 	path = lib/timer
 	url = https://github.com/dniklaus/arduino-utils-timer.git
