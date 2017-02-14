@@ -1,14 +1,35 @@
-/src/Release
-/workspace/.metadata
-/src/spec.d
-/tools/arduino
-/tools/eclipseArduino
-/workspace/RemoteSystemsTempFiles
-/src/.settings/language.settings.xml
-/src/.settings/org.eclipse.cdt.core.prefs
-/workspace/DUMP_arduino_avr_mega_ArduinoIDE.tmp
-/workspace/post_processing_boards.txt
-/workspace/post_processing_platform.txt
-/workspace/pre_processing_boards.txt
-/workspace/pre_processing_platform.txt
-/workspace/DUMP_esp8266_esp8266_huzzah_ArduinoIDE.tmp
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+/.travis.yml
+/.cproject
+/.project
+/.settings
+/.pioenvs
+.pioenvs
+.piolibdeps
