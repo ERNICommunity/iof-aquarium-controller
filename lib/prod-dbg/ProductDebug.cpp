@@ -8,9 +8,7 @@
 #include "ProductDebug.h"
 
 #include <Arduino.h>
-#ifdef ESP8266
 #include <ESP8266WiFi.h>
-#endif
 #include <ThingSpeak.h>
 #include <Timer.h>
 #include <SerialCommand.h>
@@ -23,14 +21,10 @@
 #include <DbgPrintConsole.h>
 #include <DbgTraceOut.h>
 
-#ifdef ESP8266
 extern "C"
 {
   #include "user_interface.h"
 }
-#else
-#include <RamUtils.h>
-#endif
 
 //-----------------------------------------------------------------------------
 // WiFi Commands

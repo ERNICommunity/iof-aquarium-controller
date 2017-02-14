@@ -7,16 +7,13 @@
 
 #include <Arduino.h>
 #include <stdio.h>
-#include <IoF_WiFiClient.h>
 #include <FishActuator.h>
 #include <MqttClient.h>
-//#include <MqttTopic.h>
 
 #include <IoFConfigurationAdapter.h>
 
-IoF_ConfigurationAdapter::IoF_ConfigurationAdapter(IoF_WiFiClient* wifiClient, MqttClient* mqttClient, FishActuator* fishActuator)
+IoF_ConfigurationAdapter::IoF_ConfigurationAdapter(MqttClient* mqttClient, FishActuator* fishActuator)
 : ConfigurationAdapter()
-, m_wifiClient(wifiClient)
 , m_mqttClient(mqttClient)
 , m_fishActuator(fishActuator)
 { }
@@ -26,7 +23,8 @@ IoF_ConfigurationAdapter::~IoF_ConfigurationAdapter()
 
 const char* IoF_ConfigurationAdapter::getMacAddr()
 {
-  return m_wifiClient->getMacAddress();
+  // TODO: nid refactor!
+//  return m_wifiClient->getMacAddress();
 }
 
 void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char* city)
@@ -36,9 +34,10 @@ void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char
     size_t buffSize = 100;
     char triggerTopicString[buffSize];
     snprintf(triggerTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", country, city);
-    Serial.print(F("IoF_ConfigurationAdapter::configureAquarium(): "));
+    Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
     Serial.println(triggerTopicString);
-    m_mqttClient->setPublishInfo(country, city);
+    // TODO: nid refactor!
+//    m_mqttClient->setPublishInfo(country, city);
   }
 }
 
