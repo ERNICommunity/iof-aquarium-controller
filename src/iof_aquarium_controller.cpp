@@ -55,33 +55,25 @@ public:
   : MqttMsgHandler(topic)
   { }
 
-  void handleMessage(const char* topic, unsigned char* payload, unsigned int length)
+  bool processMessage()
   {
-    if (isMyTopic(topic))
-    {
-      // take responsibility
-      char msg[length+1];
-      memcpy(msg, payload, length);
-      msg[length] = 0;
+    bool msgHasBeenHandled = false;
 
+    if (isMyTopic())
+    {
+      msgHasBeenHandled = true;
+
+      // take responsibility
       Serial.print("LED test handler, topic: ");
       Serial.print(getTopic());
       Serial.print(", msg: ");
-      Serial.println(msg);
+      Serial.println(getRxMsg());
 
-      bool pinState = atoi(msg);
+      bool pinState = atoi(getRxMsg());
       digitalWrite(BUILTIN_LED, !pinState);
     }
-    else if (0 != next())
-    {
-      // delegate
-      Serial.println("LED test handler has to delegate the job.");
-      next()->handleMessage(topic, payload, length);
-    }
-    else
-    {
-      Serial.println("LED test handler is the last in the chain");
-    }
+
+    return msgHasBeenHandled;
   }
 
 private:
@@ -138,10 +130,15 @@ public:
     {
       // now it is time to do something
       Serial.println("Touch down!");
-      if (0 != mqttClient)
+      if ((0 != mqttClient) && (0 != cfg))
       {
-        // TODO nid refactor!
-//        mqttClient->publishCapTouched();
+        if (cfg->isConfigured())
+        {
+          size_t buffSize = 100;
+          char pubTopicString[buffSize];
+          snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", cfg->country(), cfg->city());
+          mqttClient->publish(pubTopicString, cfg->city());
+        }
       }
     }
     if (0 != (currentTouchValue & 1<<7))
@@ -157,42 +154,93 @@ public:
 //-----------------------------------------------------------------------------
 // MQTT callback, when receiving a subscribed topic
 //-----------------------------------------------------------------------------
-void callback(char* topic, byte* payload, unsigned int length)
-{
-  char msg[length+1];
-  memcpy(msg, payload, length);
-  msg[length] = 0;
-  Serial.print(F("Message arrived ["));
-  Serial.print(topic);
-  Serial.print(F("] "));
-  Serial.println(msg);
-
-  if (0 == strncmp(topic, "iof/config", strlen("iof/config")))
-  {
-    Serial.println(F("Config received!"));
-    if (0 != cfg)
-    {
-      cfg->setConfig(msg, length+1);
-    }
-  }
-  else
-  {
-    // check if received topic ends with expected aquarium trigger
-    if (0 != strstr(topic, PUBLISH_SUFFIX))
-    {
-      // get Fish ID from payload
-      Serial.print(F("Aquarium trigger event received! activate fish for: "));
-      Serial.println(msg);
-      unsigned int fishId = cfg->getFishId(msg);
-      if ((0 != fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
-      {
-        Serial.print(F("Aquarium trigger event received! activate fish ID: "));
-        Serial.println(fishId);
-        fishActuator->activateFish(fishId);
-      }
-    }
-  }
-}
+//class IofConfigMqttMsgHandler : public MqttMsgHandler
+//{
+//public:
+//  IofConfigMqttMsgHandler()
+//  : MqttMsgHandler("iof/config")
+//  { }
+//
+//  void processMessage()
+//  {
+//    if (isMyTopic(topic))
+//    {
+//      // take responsibility
+//      char msg[length+1];
+//      memcpy(msg, payload, length);
+//      msg[length] = 0;
+//
+//      Serial.print("IofConfigMqttMsgHandler, topic: ");
+//      Serial.print(getTopic());
+//      Serial.print(", msg: ");
+//      Serial.println(msg);
+//
+//      Serial.println("Config received!");
+//      if (0 != cfg)
+//      {
+//        cfg->setConfig(msg, length+1);
+//      }
+//    }
+//    else if (0 != next())
+//    {
+//      // delegate
+//      next()->handleMessage(topic, payload, length);
+//    }
+//  }
+//
+//private:
+//  // forbidden default functions
+//  IofConfigMqttMsgHandler& operator = (const IofConfigMqttMsgHandler& src); // assignment operator
+//  IofConfigMqttMsgHandler(const IofConfigMqttMsgHandler& src);              // copy constructor
+//};
+//
+//class IofTriggerMqttMsgHandler : public MqttMsgHandler
+//{
+//public:
+//  IofTriggerMqttMsgHandler()
+//  : MqttMsgHandler("iof/*/*/sensor/aquarium-trigger")
+//  { }
+//
+//  void processMessage()
+//  {
+//    if (isMyTopic(topic))
+//    {
+//      // take responsibility
+//      char msg[length+1];
+//      memcpy(msg, payload, length);
+//      msg[length] = 0;
+//
+//      Serial.print("IofTriggerMqttMsgHandler, topic: ");
+//      Serial.print(getTopic());
+//      Serial.print(", msg: ");
+//      Serial.println(msg);
+//
+//      if (0 != strstr(topic, PUBLISH_SUFFIX))
+//      {
+//        // get Fish ID from payload
+//        Serial.print("Aquarium trigger event received! activate fish for: ");
+//        Serial.println(msg);
+//        unsigned int fishId = cfg->getFishId(msg);
+//        if ((0 != fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
+//        {
+//          Serial.print("Aquarium trigger event received! activate fish ID: ");
+//          Serial.println(fishId);
+//          fishActuator->activateFish(fishId);
+//        }
+//      }
+//    }
+//    else if (0 != next())
+//    {
+//      // delegate
+//      next()->handleMessage(topic, payload, length);
+//    }
+//  }
+//
+//private:
+//  // forbidden default functions
+//  IofTriggerMqttMsgHandler& operator = (const IofConfigMqttMsgHandler& src); // assignment operator
+//  IofTriggerMqttMsgHandler(const IofConfigMqttMsgHandler& src);              // copy constructor
+//};
 
 void setup()
 {
@@ -230,11 +278,6 @@ void setup()
   // Configuration
   //-----------------------------------------------------------------------------
   cfg = new Configuration(new IoF_ConfigurationAdapter(mqttClient, fishActuator));
-  if ((0 != mqttClient) && (0 != cfg))
-  {
-    // TODO: nid check refactoring!
-//    mqttClient->attachAdapter(new IoF_MqttClientAdapter(wifiClient, cfg));
-  }
 }
 
 // The loop function is called in an endless loop

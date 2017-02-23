@@ -5,7 +5,7 @@
  *      Author: niklausd
  */
 
-#include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <stdio.h>
 #include <FishActuator.h>
 #include <MqttClient.h>
@@ -23,8 +23,7 @@ IoF_ConfigurationAdapter::~IoF_ConfigurationAdapter()
 
 const char* IoF_ConfigurationAdapter::getMacAddr()
 {
-  // TODO: nid refactor!
-//  return m_wifiClient->getMacAddress();
+  return WiFi.macAddress().c_str();
 }
 
 void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char* city)
@@ -36,8 +35,6 @@ void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char
     snprintf(triggerTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", country, city);
     Serial.print("IoF_ConfigurationAdapter::configureAquarium(): ");
     Serial.println(triggerTopicString);
-    // TODO: nid refactor!
-//    m_mqttClient->setPublishInfo(country, city);
   }
 }
 
