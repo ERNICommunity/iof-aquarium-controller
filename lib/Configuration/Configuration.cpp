@@ -45,7 +45,7 @@ Configuration::~Configuration()
   m_city = 0;
 }
 
-void Configuration::setConfig(char json[], unsigned int jsonSize)
+void Configuration::setConfig(const char* json, unsigned int jsonSize)
 {
   m_jsonSize = jsonSize;
   strncpy(m_json, json, jsonSize);
@@ -53,7 +53,7 @@ void Configuration::setConfig(char json[], unsigned int jsonSize)
   if (0 != m_adapter)
   {
     DynamicJsonBuffer jsonBuffer;
-    JsonObject& jsonObjectRoot = jsonBuffer.parseObject(json);
+    JsonObject& jsonObjectRoot = jsonBuffer.parseObject(m_json);
 
     const char* aquariumId = jsonObjectRoot["aquarium-id"];
     Serial.print("JSON aquarium-id: ");
@@ -96,7 +96,6 @@ void Configuration::setConfig(char json[], unsigned int jsonSize)
       strncpy(m_city, city, s_maxNameSize);
 
       m_isConfigured = true;
-      m_adapter->configureAquarium(country, city);
     }
   }
 }

@@ -27,11 +27,6 @@ public:
   /**
    *
    */
-  virtual void configureAquarium(const char* country, const char* city) = 0;
-
-  /**
-   *
-   */
   virtual void configureFish(unsigned int fishHwId, const char* country, const char* city) = 0;
 
 
@@ -53,7 +48,7 @@ public:
 
   void attachAdapter(ConfigurationAdapter* adapter);
 
-  void setConfig(char json[], unsigned int jsonSize);
+  void setConfig(const char* json, unsigned int jsonSize);
 
   /**
    * Get Fish ID by the assigned city.

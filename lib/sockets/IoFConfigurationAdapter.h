@@ -10,21 +10,18 @@
 
 #include <Configuration.h>
 
-class MqttClient;
 class FishActuator;
 
 class IoF_ConfigurationAdapter: public ConfigurationAdapter
 {
 public:
-  IoF_ConfigurationAdapter(MqttClient* mqttClient, FishActuator* fishActuator);
+  IoF_ConfigurationAdapter(FishActuator* fishActuator);
   virtual ~IoF_ConfigurationAdapter();
 
   const char* getMacAddr();
-  void configureAquarium(const char* country, const char* city);
   void configureFish(unsigned int fishHwId, const char* country, const char* city);
 
 private:
-    MqttClient* m_mqttClient;
     FishActuator* m_fishActuator;
 
 private:  // forbidden functions
