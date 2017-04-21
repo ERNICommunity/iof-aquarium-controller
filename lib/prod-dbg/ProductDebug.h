@@ -8,9 +8,6 @@
 #ifndef LIB_PROD_DBG_PRODUCTDEBUG_H_
 #define LIB_PROD_DBG_PRODUCTDEBUG_H_
 
-void setupDebugEnv();
-void dbgCliExecute();
-void sayHello();
-void unrecognized(const char *command);
+void setupProdDebugEnv();
 
 #endif /* LIB_PROD_DBG_PRODUCTDEBUG_H_ */
