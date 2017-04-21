@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 TestLedMqttSubscriber::TestLedMqttSubscriber()
-: MqttTopicSubscriber("/test/led")
+: MqttTopicSubscriber("test/led")
 { }
 
 TestLedMqttSubscriber::~TestLedMqttSubscriber()
@@ -33,7 +33,7 @@ bool TestLedMqttSubscriber::processMessage()
     {
       // take responsibility
       Serial.print(", pin state: ");
-      bool pinState = atoi(rxMsg->getRxMsg());
+      bool pinState = atoi(rxMsg->getRxMsgString());
       Serial.println(pinState);
       digitalWrite(BUILTIN_LED, !pinState);  // LED state is inverted on ESP8266
       msgHasBeenHandled = true;
@@ -76,10 +76,14 @@ bool IofConfigMqttSubscriber::processMessage()
       Serial.println("Config received!");
       if (0 != m_cfg)
       {
-        m_cfg->setConfig(rxMsg->getRxMsg(), rxMsg->getRxMsgSize());
+        m_cfg->setConfig(rxMsg->getRxMsgString(), rxMsg->getRxMsgSize());
       }
     }
     msgHasBeenHandled = true;
+  }
+  else
+  {
+    Serial.println("false");
   }
   return msgHasBeenHandled;
 }
@@ -87,7 +91,7 @@ bool IofConfigMqttSubscriber::processMessage()
 //-----------------------------------------------------------------------------
 
 IofTriggerMqttSubscriber::IofTriggerMqttSubscriber(Configuration* config, FishActuator* fishActuator)
-: MqttTopicSubscriber("iof/*/*/sensor/aquarium-trigger")
+: MqttTopicSubscriber("iof/+/+/sensor/aquarium-trigger")
 , m_cfg(config)
 , m_fishActuator(fishActuator)
 { }
@@ -110,16 +114,16 @@ bool IofTriggerMqttSubscriber::processMessage()
     {
       // take responsibility
       Serial.print(" (");
-      Serial.print(rxMsg->getRxTopic());
+      Serial.print(rxMsg->getRxTopic()->getTopicString());
       Serial.println(")");
 
       // get Fish ID from payload
-      Serial.print("Aquarium trigger event received! activate fish for: ");
-      Serial.println(rxMsg->getRxMsg());
-      unsigned int fishId = m_cfg->getFishId(rxMsg->getRxMsg());
+      Serial.print("Aquarium trigger event received! Will activate fish for: ");
+      Serial.println(rxMsg->getRxMsgString());
+      unsigned int fishId = m_cfg->getFishId(rxMsg->getRxMsgString());
       if ((0 != m_fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
       {
-        Serial.print("Aquarium trigger event received! activate fish ID: ");
+        Serial.print("Activate fish ID: ");
         Serial.println(fishId);
         m_fishActuator->activateFish(fishId);
       }
@@ -129,6 +133,10 @@ bool IofTriggerMqttSubscriber::processMessage()
       Serial.println();
     }
     msgHasBeenHandled = true;
+  }
+  else
+  {
+    Serial.println("false");
   }
   return msgHasBeenHandled;
 }

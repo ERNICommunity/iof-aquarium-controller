@@ -47,8 +47,6 @@ Configuration*        cfg          = 0;
 #define SDA_PIN 4
 #define SCL_PIN 5
 
-const byte ledPin = 0; // Pin with LED on Adafruit Huzzah
-
 void setup()
 {
   pinMode(BUILTIN_LED, OUTPUT);
