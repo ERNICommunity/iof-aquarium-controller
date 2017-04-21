@@ -16,6 +16,3 @@
 [submodule "lib/app-dbg"]
 	path = lib/app-dbg
 	url = https://github.com/dniklaus/wiring-app-debug.git
-[submodule "lib/regexp"]
-	path = lib/regexp
-	url = https://github.com/nickgammon/Regexp.git
