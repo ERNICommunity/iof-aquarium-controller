@@ -50,12 +50,15 @@ CapSensor::CapSensor(CapSensorAdapter* adapter, unsigned int capSensingDelayMs )
 , m_adaCap(new Adafruit_CAP1188())
 { 
    // init cap sensor with i2c
-   if(!m_adaCap->begin())
+   if (m_adaCap->begin())
+   {
+     m_adaCap->writeRegister(0x1F, 0x6F);
+   }
+   else
    {
      Serial.println("CAP1188 not found");
-     while (1);
+//     while (1);
    }
-   m_adaCap->writeRegister(0x1F, 0x6F);
 }
 
 CapSensor::~CapSensor()
