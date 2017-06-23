@@ -20,16 +20,15 @@ public:
 
   /**
    * Get MAC Address.
-   * @return macAddr c-String with the MAC address in the form "xx:xx:xx:xx:xx:xx" (memory allocated by callee)
+   * @param macAddr c-String with the MAC address in the form "xx:xx:xx:xx:xx:xx"
+   * @param macAddrSize buffer size for the mac address
    */
-  virtual const char* getMacAddr() = 0;
+  virtual void getMacAddr(char* macAddr, unsigned int macAddrSize) = 0;
 
   /**
    *
    */
   virtual void configureFish(unsigned int fishHwId, const char* country, const char* city) = 0;
-
-
 
 protected:
   ConfigurationAdapter() { }
@@ -71,9 +70,12 @@ private:
   unsigned int m_jsonSize;
   static const unsigned int s_maxJsonSize;
   static const unsigned int s_maxNameSize;
+  static const unsigned int s_macAddrSize;
   bool m_isConfigured;
   char* m_country;
   char* m_city;
+  char* m_macAddr;
+
 
 private:  // forbidden functions
   Configuration(const Configuration& src);              // copy constructor

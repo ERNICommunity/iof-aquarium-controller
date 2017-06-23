@@ -15,10 +15,10 @@ using namespace ArduinoJson;
 
 #include "Configuration.h"
 
-const unsigned int Configuration::s_maxJsonSize   = 512;
+const unsigned int Configuration::s_maxJsonSize   = 1000;
 const unsigned int Configuration::s_maxNameSize   = 50;
+const unsigned int Configuration::s_macAddrSize   = 20;
 const unsigned int Configuration::FISH_ID_INVALID = 0;
-
 
 Configuration::Configuration(ConfigurationAdapter* adapter)
 : m_adapter(adapter)
@@ -27,10 +27,19 @@ Configuration::Configuration(ConfigurationAdapter* adapter)
 , m_isConfigured(false)
 , m_country(new char[s_maxNameSize+1])
 , m_city(new char[s_maxNameSize+1])
+, m_macAddr(new char[s_macAddrSize])
 {
   memset(m_json, 0, s_maxJsonSize+1);
   memset(m_country, 0, s_maxNameSize+1);
   memset(m_city, 0, s_maxNameSize+1);
+  memset(m_macAddr, 0, s_macAddrSize);
+
+  if (0 != m_adapter)
+  {
+    m_adapter->getMacAddr(m_macAddr, s_macAddrSize);
+    Serial.print("Configuration::Configuration(), m_macAddr: ");
+    Serial.println(m_macAddr);
+  }
 }
 
 Configuration::~Configuration()
@@ -43,6 +52,9 @@ Configuration::~Configuration()
 
   delete [] m_city;
   m_city = 0;
+
+  delete [] m_macAddr;
+  m_macAddr = 0;
 }
 
 void Configuration::setConfig(const char* json, unsigned int jsonSize)
@@ -58,12 +70,10 @@ void Configuration::setConfig(const char* json, unsigned int jsonSize)
     const char* aquariumId = jsonObjectRoot["aquarium-id"];
     Serial.print("JSON aquarium-id: ");
     Serial.println(aquariumId);
-    const int macAddrLen = 17;
-    const char* macAddr = m_adapter->getMacAddr();
     Serial.print("WiFi MAC Address: ");
-    Serial.println(macAddr);
+    Serial.println(m_macAddr);
 
-    if ((macAddrLen == strlen(aquariumId)) && (0 == strncmp(aquariumId, macAddr, macAddrLen)))
+    if (0 == strncmp(aquariumId, m_macAddr, s_macAddrSize))
     {
       // config is for this controller
       Serial.println("config is for this controller");
