@@ -1,9 +1,6 @@
 [submodule "lib/CmdSequence"]
 	path = lib/CmdSequence
 	url = https://github.com/dniklaus/CmdSequence.git
-[submodule "lib/timer"]
-	path = lib/timer
-	url = https://github.com/dniklaus/arduino-utils-timer.git
 [submodule "lib/dbg-trace"]
 	path = lib/dbg-trace
 	url = https://github.com/ERNICommunity/dbg-trace.git
