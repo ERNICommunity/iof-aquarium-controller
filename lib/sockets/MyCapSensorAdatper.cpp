@@ -7,14 +7,12 @@
 
 #include <Arduino.h>
 #include <FishActuator.h>
-#include <Configuration.h>
 #include <MyCapSensorAdatper.h>
-#include <MqttClient.h>
+#include <IofTriggerPublisher.h>
 
-MyCapSensorAdatper::MyCapSensorAdatper(Configuration* cfg, FishActuator* fishActuator, MqttClient* mqttClient)
-: m_cfg(cfg)
-, m_fishActuator(fishActuator)
-, m_mqttClient(mqttClient)
+MyCapSensorAdatper::MyCapSensorAdatper(FishActuator* fishActuator, IofTriggerPublisher* triggerPublisher)
+: m_fishActuator(fishActuator)
+, m_triggerPublisher(triggerPublisher)
 { }
 
 MyCapSensorAdatper::~MyCapSensorAdatper()
@@ -26,15 +24,9 @@ void MyCapSensorAdatper::notifyCapTouched(uint8_t currentTouchValue)
   {
     // now it is time to do something
     Serial.println("Touch down!");
-    if ((0 != m_cfg) && (0 != m_mqttClient))
+    if (0 != m_triggerPublisher)
     {
-      if (m_cfg->isConfigured())
-      {
-        size_t buffSize = 100;
-        char pubTopicString[buffSize];
-        snprintf(pubTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", m_cfg->country(), m_cfg->city());
-        m_mqttClient->publish(pubTopicString, m_cfg->city());
-      }
+      m_triggerPublisher->publish();
     }
   }
   if (0 != (currentTouchValue & 1<<7))

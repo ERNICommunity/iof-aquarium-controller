@@ -11,6 +11,7 @@
 #include <Configuration.h>
 
 class FishActuator;
+class IofTriggerPublisher;
 
 class IoF_ConfigurationAdapter: public ConfigurationAdapter
 {
@@ -18,11 +19,13 @@ public:
   IoF_ConfigurationAdapter(FishActuator* fishActuator);
   virtual ~IoF_ConfigurationAdapter();
 
-  const char* getMacAddr();
+  void attachTriggerPublisher(IofTriggerPublisher* triggerPublisher);
+  void getMacAddr(char* macAddr, unsigned int macAddrSize);
   void configureFish(unsigned int fishHwId, const char* country, const char* city);
 
 private:
     FishActuator* m_fishActuator;
+    IofTriggerPublisher* m_triggerPublisher;
 
 private:  // forbidden functions
   IoF_ConfigurationAdapter();

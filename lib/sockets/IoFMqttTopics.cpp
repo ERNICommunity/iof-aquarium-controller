@@ -6,6 +6,7 @@
  */
 
 #include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <Configuration.h>
 #include <FishActuator.h>
 #include <IoFMqttTopics.h>
@@ -53,7 +54,7 @@ bool TestLedMqttSubscriber::processMessage()
 //-----------------------------------------------------------------------------
 
 IofConfigMqttSubscriber::IofConfigMqttSubscriber(Configuration* config)
-: MqttTopicSubscriber("iof/config")
+: MqttTopicSubscriber(String(String("iof/config/") + String(WiFi.macAddress())).c_str())
 , m_cfg(config)
 { }
 

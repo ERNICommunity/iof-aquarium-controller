@@ -10,21 +10,19 @@
 
 #include <CapSensor.h>
 
-class Configuration;
 class FishActuator;
-class MqttClient;
+class IofTriggerPublisher;
 
 class MyCapSensorAdatper: public CapSensorAdapter
 {
 public:
-  MyCapSensorAdatper(Configuration* cfg, FishActuator* fishActuator, MqttClient* mqttClient);
+  MyCapSensorAdatper(FishActuator* fishActuator, IofTriggerPublisher* triggerPublisher);
   virtual ~MyCapSensorAdatper();
   virtual void notifyCapTouched(uint8_t currentTouchValue);
 
 private:
-  Configuration* m_cfg;
   FishActuator* m_fishActuator;
-  MqttClient* m_mqttClient;
+  IofTriggerPublisher* m_triggerPublisher;
 
 private:
   MyCapSensorAdatper();
