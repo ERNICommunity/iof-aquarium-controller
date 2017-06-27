@@ -39,7 +39,7 @@
 #include <TestFishNotificationAdapter.h>
 //#include <TestIofConfigRequestSubscriber.h>
 
-#define MQTT_SERVER     "iot.eclipse.org"
+#define MQTT_SERVER     "test.mosquitto.org"
 #define PUBLISH_SUFFIX  "sensor/aquarium-trigger"
 
 SerialCommand*        sCmd              = 0;
