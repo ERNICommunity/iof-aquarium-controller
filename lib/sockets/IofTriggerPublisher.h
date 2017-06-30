@@ -10,6 +10,7 @@
 
 class Configuration;
 class MqttTopicPublisher;
+class DbgTrace_Port;
 
 class IofTriggerPublisher
 {
@@ -24,6 +25,7 @@ public:
 private:
   MqttTopicPublisher* m_publisher;
   Configuration* m_cfg;
+  DbgTrace_Port* m_trPort;
 
 private:
   IofTriggerPublisher();                                            // default constructor

@@ -1,4 +1,4 @@
-#define MQTT_MAX_PACKET_SIZE 500
+#define MQTT_MAX_PACKET_SIZE 1000
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -37,7 +37,7 @@
 #include <MyCapSensorAdatper.h>
 #include <IofTriggerPublisher.h>
 #include <TestFishNotificationAdapter.h>
-//#include <TestIofConfigRequestSubscriber.h>
+#include <TestIofConfigRequestSubscriber.h>
 
 #define MQTT_SERVER     "test.mosquitto.org"
 #define PUBLISH_SUFFIX  "sensor/aquarium-trigger"
@@ -96,10 +96,10 @@ void setup()
   //-----------------------------------------------------------------------------
   MqttClient.begin(MQTT_SERVER);
   new TestLedMqttSubscriber();
-//  new TestIofConfigRequestSubscriber();
+  new TestIofConfigRequestSubscriber();
   new IofConfigMqttSubscriber(config);
   new IofTriggerMqttSubscriber(config, fishActuator);
-  new MqttTopicPublisher("iof/config", WiFi.macAddress().c_str(), true);
+  new MqttTopicPublisher("iof/config", WiFi.macAddress().c_str(), MqttTopicPublisher::DO_AUTO_PUBLISH);
 }
 
 // The loop function is called in an endless loop

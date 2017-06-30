@@ -21,7 +21,9 @@ public:
 
   void attachTriggerPublisher(IofTriggerPublisher* triggerPublisher);
   void getMacAddr(char* macAddr, unsigned int macAddrSize);
+
   void configureFish(unsigned int fishHwId, const char* country, const char* city);
+  void notifyConfigDone();
 
 private:
     FishActuator* m_fishActuator;

@@ -8,17 +8,23 @@
 #include <Configuration.h>
 #include <MqttTopic.h>
 #include <String.h>
+#include <DbgTracePort.h>
+#include <DbgTraceLevel.h>
 
 #include <IofTriggerPublisher.h>
 
 IofTriggerPublisher::IofTriggerPublisher(Configuration* cfg)
 : m_publisher(0)
 , m_cfg(cfg)
+, m_trPort(new DbgTrace_Port("ioftrgpub", DbgTrace_Level::debug))
 {
   if ((0 != m_cfg) && m_cfg->isConfigured())
   {
-    m_publisher = new MqttTopicPublisher(String("iof/" + String(m_cfg->country()) + "/" + String(m_cfg->city()) +
-                                                "/sensor/aquarium-trigger").c_str(), m_cfg->city());
+    size_t len = 100;
+    char trigPubTopic[len+1];
+    snprintf(trigPubTopic, len, "iof/%s/%s/sensor/aquarium-trigger", m_cfg->country(), m_cfg->city());
+    m_publisher = new MqttTopicPublisher(trigPubTopic, m_cfg->city());
+    TR_PRINTF(m_trPort, DbgTrace_Level::debug, "m_publisher.topic: %s", m_publisher->getTopicString());
   }
 }
 
@@ -36,8 +42,11 @@ void IofTriggerPublisher::notifyConfigChanged()
     {
       delete m_publisher;
     }
-    m_publisher = new MqttTopicPublisher(String("iof/" + String(m_cfg->country()) + "/" + String(m_cfg->city()) +
-                                                "/sensor/aquarium-trigger").c_str(), m_cfg->city());
+    unsigned int len = 100;
+    char trigPubTopic[len+1];
+    snprintf(trigPubTopic, len, "iof/%s/%s/sensor/aquarium-trigger", m_cfg->country(), m_cfg->city());
+    m_publisher = new MqttTopicPublisher(trigPubTopic, m_cfg->city());
+    TR_PRINTF(m_trPort, DbgTrace_Level::debug, "m_publisher.topic: %s", m_publisher->getTopicString());
   }
 }
 

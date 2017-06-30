@@ -10,6 +10,8 @@
 
 #include <MqttTopic.h>
 
+class DbgTrace_Port;
+
 //-----------------------------------------------------------------------------
 
 class TestLedMqttSubscriber : public MqttTopicSubscriber
@@ -18,6 +20,9 @@ public:
   TestLedMqttSubscriber();
   virtual ~TestLedMqttSubscriber();
   bool processMessage();
+
+private:
+  DbgTrace_Port* m_trPort;
 
 private:
   // forbidden default functions
@@ -38,6 +43,7 @@ public:
 
 private:
   Configuration* m_cfg;
+  DbgTrace_Port* m_trPort;
 
 private:
   // forbidden default functions
@@ -60,6 +66,7 @@ public:
 private:
   Configuration* m_cfg;
   FishActuator* m_fishActuator;
+  DbgTrace_Port* m_trPort;
 
 private:
   // forbidden default functions

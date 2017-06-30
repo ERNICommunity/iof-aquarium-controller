@@ -30,6 +30,11 @@ public:
    */
   virtual void configureFish(unsigned int fishHwId, const char* country, const char* city) = 0;
 
+  /**
+   *
+   */
+  virtual void notifyConfigDone() = 0;
+
 protected:
   ConfigurationAdapter() { }
 private:  // forbidden functions
@@ -38,6 +43,8 @@ private:  // forbidden functions
 };
 
 //-----------------------------------------------------------------------------
+
+class DbgTrace_Port;
 
 class Configuration
 {
@@ -65,16 +72,17 @@ public:
   static const unsigned int FISH_ID_INVALID;   ///
 
 private:
-  ConfigurationAdapter* m_adapter;
-  char* m_json;
-  unsigned int m_jsonSize;
   static const unsigned int s_maxJsonSize;
   static const unsigned int s_maxNameSize;
   static const unsigned int s_macAddrSize;
+  ConfigurationAdapter* m_adapter;
+  char* m_json;
+  unsigned int m_jsonSize;
   bool m_isConfigured;
   char* m_country;
   char* m_city;
   char* m_macAddr;
+  DbgTrace_Port* m_trPort;
 
 
 private:  // forbidden functions

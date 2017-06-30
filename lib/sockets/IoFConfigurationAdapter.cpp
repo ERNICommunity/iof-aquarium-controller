@@ -40,6 +40,10 @@ void IoF_ConfigurationAdapter::configureFish(unsigned int fishHwId, const char* 
   {
     m_fishActuator->addFishAtHwId(fishHwId);
   }
+}
+
+void IoF_ConfigurationAdapter::notifyConfigDone()
+{
   if (0 != m_triggerPublisher)
   {
     m_triggerPublisher->notifyConfigChanged();

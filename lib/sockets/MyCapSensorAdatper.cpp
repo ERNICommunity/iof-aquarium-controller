@@ -18,22 +18,18 @@ MyCapSensorAdatper::MyCapSensorAdatper(FishActuator* fishActuator, IofTriggerPub
 MyCapSensorAdatper::~MyCapSensorAdatper()
 { }
 
-void MyCapSensorAdatper::notifyCapTouched(uint8_t currentTouchValue)
+void MyCapSensorAdatper::notifyFishActivation()
 {
-  if (0 != (currentTouchValue & 1<<0))
+  if (0 != m_triggerPublisher)
   {
-    // now it is time to do something
-    Serial.println("Touch down!");
-    if (0 != m_triggerPublisher)
-    {
-      m_triggerPublisher->publish();
-    }
+    m_triggerPublisher->publish();
   }
-  if (0 != (currentTouchValue & 1<<7))
+}
+
+void MyCapSensorAdatper::notifyFishStopAll()
+{
+  if (0 != m_fishActuator)
   {
-    if (0 != m_fishActuator)
-    {
-      m_fishActuator->stopFish();
-    }
+    m_fishActuator->stopFish();
   }
 }

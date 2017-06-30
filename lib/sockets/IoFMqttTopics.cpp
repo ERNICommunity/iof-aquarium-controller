@@ -9,44 +9,42 @@
 #include <ESP8266WiFi.h>
 #include <Configuration.h>
 #include <FishActuator.h>
+#include <DbgTracePort.h>
+#include <DbgTraceLevel.h>
 #include <IoFMqttTopics.h>
 
 //-----------------------------------------------------------------------------
 
 TestLedMqttSubscriber::TestLedMqttSubscriber()
 : MqttTopicSubscriber("test/led")
+, m_trPort(new DbgTrace_Port("mqttled", DbgTrace_Level::debug))
 { }
 
 TestLedMqttSubscriber::~TestLedMqttSubscriber()
-{ }
+{
+  delete m_trPort;
+  m_trPort = 0;
+}
 
 bool TestLedMqttSubscriber::processMessage()
 {
   bool msgHasBeenHandled = false;
   MqttRxMsg* rxMsg = getRxMsg();
-  Serial.print("TestLedMqttSubscriber, ");
-  Serial.print("isMyTopic(): ");
 
   if (isMyTopic())
   {
-    Serial.print("true");
     if (0 != rxMsg)
     {
       // take responsibility
-      Serial.print(", pin state: ");
       bool pinState = atoi(rxMsg->getRxMsgString());
-      Serial.println(pinState);
+      TR_PRINTF(m_trPort, DbgTrace_Level::debug, "LED state: %s", (pinState > 0) ? "on" : "off");
       digitalWrite(BUILTIN_LED, !pinState);  // LED state is inverted on ESP8266
       msgHasBeenHandled = true;
     }
     else
     {
-      Serial.println("ERROR: rxMsg unavailable!");
+      TR_PRINTF(m_trPort, DbgTrace_Level::error, "rxMsg unavailable!");
     }
-  }
-  else
-  {
-    Serial.println("false");
   }
   return msgHasBeenHandled;
 }
@@ -56,35 +54,37 @@ bool TestLedMqttSubscriber::processMessage()
 IofConfigMqttSubscriber::IofConfigMqttSubscriber(Configuration* config)
 : MqttTopicSubscriber(String(String("iof/config/") + String(WiFi.macAddress())).c_str())
 , m_cfg(config)
+, m_trPort(new DbgTrace_Port("mqttiofcfg", DbgTrace_Level::debug))
 { }
 
 IofConfigMqttSubscriber::~IofConfigMqttSubscriber()
-{ }
+{
+  delete m_trPort;
+  m_trPort = 0;
+}
 
 bool IofConfigMqttSubscriber::processMessage()
 {
   bool msgHasBeenHandled = false;
   MqttRxMsg* rxMsg = getRxMsg();
-  Serial.print("IofConfigMqttSubscriber, ");
-  Serial.print("isMyTopic(): ");
 
   if (isMyTopic())
   {
-    Serial.print("true");
     if (0 != rxMsg)
     {
       // take responsibility
-      Serial.println("Config received!");
+      Serial.println("");
       if (0 != m_cfg)
       {
+        TR_PRINTF(m_trPort, DbgTrace_Level::debug, "Config received! Size: %d", rxMsg->getRxMsgSize());
         m_cfg->setConfig(rxMsg->getRxMsgString(), rxMsg->getRxMsgSize());
       }
     }
+    else
+    {
+      TR_PRINTF(m_trPort, DbgTrace_Level::error, "rxMsg unavailable!");
+    }
     msgHasBeenHandled = true;
-  }
-  else
-  {
-    Serial.println("false");
   }
   return msgHasBeenHandled;
 }
@@ -95,49 +95,41 @@ IofTriggerMqttSubscriber::IofTriggerMqttSubscriber(Configuration* config, FishAc
 : MqttTopicSubscriber("iof/+/+/sensor/aquarium-trigger")
 , m_cfg(config)
 , m_fishActuator(fishActuator)
+, m_trPort(new DbgTrace_Port("ioftrgsub", DbgTrace_Level::debug))
 { }
 
 IofTriggerMqttSubscriber::~IofTriggerMqttSubscriber()
-{ }
+{
+  delete m_trPort;
+  m_trPort = 0;
+}
 
 bool IofTriggerMqttSubscriber::processMessage()
 {
   bool msgHasBeenHandled = false;
   MqttRxMsg* rxMsg = getRxMsg();
-  Serial.print("IofTriggerMqttSubscriber, ");
-  Serial.print("isMyTopic(): ");
+
+  TR_PRINTF(m_trPort, DbgTrace_Level::debug, "Message arrived, topic: %s", rxMsg->getRxTopic()->getTopicString());
+  TR_PRINTF(m_trPort, DbgTrace_Level::debug, "             own topic: %s (is %smy topic)", getTopicString(), isMyTopic() ? "" : "not ");
 
   if (isMyTopic())
   {
-    Serial.print("true");
-
     if ((0 != rxMsg) && (0 != m_cfg))
     {
       // take responsibility
-      Serial.print(" (");
-      Serial.print(rxMsg->getRxTopic()->getTopicString());
-      Serial.println(")");
-
       // get Fish ID from payload
-      Serial.print("Aquarium trigger event received! Will activate fish for: ");
-      Serial.println(rxMsg->getRxMsgString());
       unsigned int fishId = m_cfg->getFishId(rxMsg->getRxMsgString());
       if ((0 != m_fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
       {
-        Serial.print("Activate fish ID: ");
-        Serial.println(fishId);
+        TR_PRINTF(m_trPort, DbgTrace_Level::debug, "Activating fish for: %s (fish Id %d)", rxMsg->getRxMsgString(), fishId);
         m_fishActuator->activateFish(fishId);
       }
     }
     else
     {
-      Serial.println();
+      TR_PRINTF(m_trPort, DbgTrace_Level::error, "rxMsg unavailable!");
     }
     msgHasBeenHandled = true;
-  }
-  else
-  {
-    Serial.println("false");
   }
   return msgHasBeenHandled;
 }

@@ -18,7 +18,8 @@ class MyCapSensorAdatper: public CapSensorAdapter
 public:
   MyCapSensorAdatper(FishActuator* fishActuator, IofTriggerPublisher* triggerPublisher);
   virtual ~MyCapSensorAdatper();
-  virtual void notifyCapTouched(uint8_t currentTouchValue);
+  virtual void notifyFishActivation();
+  virtual void notifyFishStopAll();
 
 private:
   FishActuator* m_fishActuator;
