@@ -11,6 +11,8 @@
 #include <Arduino.h>
 #include <FishActuator.h>
 
+class DbgTrace_Port;
+
 /**
  * Fish Event & Error Notification Adapter
  */
@@ -22,6 +24,9 @@ public:
 
   void notifyFishEvent(unsigned int fishHwId, FishEvent event);
   void notifyFishError(unsigned int fishHwId, FishError error);
+
+private:
+  DbgTrace_Port* m_trPort;
 
 private:
   TestFishNotificationAdapter(const TestFishNotificationAdapter& src);              // copy constructor
