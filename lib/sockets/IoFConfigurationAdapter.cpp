@@ -5,47 +5,47 @@
  *      Author: niklausd
  */
 
-#include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <stdio.h>
-#include <IoF_WiFiClient.h>
 #include <FishActuator.h>
+#include <IofTriggerPublisher.h>
 #include <MqttClient.h>
-//#include <MqttTopic.h>
 
 #include <IoFConfigurationAdapter.h>
 
-IoF_ConfigurationAdapter::IoF_ConfigurationAdapter(IoF_WiFiClient* wifiClient, MqttClient* mqttClient, FishActuator* fishActuator)
+IoF_ConfigurationAdapter::IoF_ConfigurationAdapter(FishActuator* fishActuator)
 : ConfigurationAdapter()
-, m_wifiClient(wifiClient)
-, m_mqttClient(mqttClient)
 , m_fishActuator(fishActuator)
+, m_triggerPublisher(0)
 { }
 
 IoF_ConfigurationAdapter::~IoF_ConfigurationAdapter()
 { }
 
-const char* IoF_ConfigurationAdapter::getMacAddr()
+void IoF_ConfigurationAdapter::attachTriggerPublisher(IofTriggerPublisher* triggerPublisher)
 {
-  return m_wifiClient->getMacAddress();
+  m_triggerPublisher = triggerPublisher;
 }
 
-void IoF_ConfigurationAdapter::configureAquarium(const char* country, const char* city)
+void IoF_ConfigurationAdapter::getMacAddr(char* macAddr, unsigned int macAddrSize)
 {
-  if (0 != m_mqttClient)
-  {
-    size_t buffSize = 100;
-    char triggerTopicString[buffSize];
-    snprintf(triggerTopicString, buffSize, "iof/%s/%s/sensor/aquarium-trigger", country, city);
-    Serial.print(F("IoF_ConfigurationAdapter::configureAquarium(): "));
-    Serial.println(triggerTopicString);
-    m_mqttClient->setPublishInfo(country, city);
-  }
+  strncpy(macAddr, WiFi.macAddress().c_str(), macAddrSize);
+  Serial.print("IoF_ConfigurationAdapter::getMacAddr(): ");
+  Serial.println(macAddr);
 }
 
 void IoF_ConfigurationAdapter::configureFish(unsigned int fishHwId, const char* country, const char* city)
 {
-  if (!m_fishActuator->isFishConfigured(fishHwId))
+  if ((0 != m_fishActuator) && !m_fishActuator->isFishConfigured(fishHwId))
   {
     m_fishActuator->addFishAtHwId(fishHwId);
+  }
+}
+
+void IoF_ConfigurationAdapter::notifyConfigDone()
+{
+  if (0 != m_triggerPublisher)
+  {
+    m_triggerPublisher->notifyConfigChanged();
   }
 }

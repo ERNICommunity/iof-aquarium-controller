@@ -4,6 +4,7 @@
 
 class Timer;
 class Adafruit_CAP1188;
+class DbgTrace_Port;
 
 //-----------------------------------------------------------------------------
 
@@ -13,12 +14,8 @@ class Adafruit_CAP1188;
 class CapSensorAdapter
 {
 public:
-  /**
-   * Notification method to be implemented by specific adapter.
-   * Called whenever one of the 8 touch capacitors is touched
-   * @param Current status, bit set, each bit represents one CAP sense input pin, active (true) or inactive (false).
-   */
-  virtual void notifyCapTouched(uint8_t currentTouchValue) = 0;
+  virtual void notifyFishActivation() = 0;
+  virtual void notifyFishStopAll() = 0;
 
 protected:
   CapSensorAdapter() { }
@@ -34,8 +31,7 @@ private:  // forbidden functions
 class CapSensor
 {
 public:
-  
-  CapSensor(CapSensorAdapter* adapter = 0,  unsigned int capSensingDelayMs = 5000);
+  CapSensor(CapSensorAdapter* adapter = 0);
 
   /**
    * Destructor.
@@ -58,16 +54,22 @@ public:
    * Retrieve current status.
    * @return  Current status, bit set, each bit represents one CAP sense input pin, active (true) or inactive (false).
    */
-  uint8_t wasTouched();
+  uint8_t getTouchBitset();
 
-  void notifyTouched(uint8_t currentTouchValue);
+  /**
+   * Notification method.
+   * Called whenever one of the 8 touch capacitor bits has changed its state.
+   * @param currentTouchBitset, each bit represents one CAP sense input pin, active (true) or inactive (false).
+   */
+  void notifyTouched(uint8_t currentTouchBitset);
   
 private:
+  static const int s_keyPollTime;
   Timer* m_debounceTimer;
   CapSensorAdapter* m_adapter;
-  Adafruit_CAP1188* m_adaCap;
-  static const int s_defaultKeyPollTime;
-  
+  Adafruit_CAP1188* m_cap1188;
+  bool m_isCap1188Ready;
+  DbgTrace_Port* m_trPort;
 
 private:  // forbidden functions
   CapSensor(const CapSensor& src);              // copy constructor

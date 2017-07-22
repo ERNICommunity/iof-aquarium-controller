@@ -10,24 +10,24 @@
 
 #include <Configuration.h>
 
-class IoF_WiFiClient;
-class MqttClient;
 class FishActuator;
+class IofTriggerPublisher;
 
 class IoF_ConfigurationAdapter: public ConfigurationAdapter
 {
 public:
-  IoF_ConfigurationAdapter(IoF_WiFiClient* wifiClient, MqttClient* mqttClient, FishActuator* fishActuator);
+  IoF_ConfigurationAdapter(FishActuator* fishActuator);
   virtual ~IoF_ConfigurationAdapter();
 
-  const char* getMacAddr();
-  void configureAquarium(const char* country, const char* city);
+  void attachTriggerPublisher(IofTriggerPublisher* triggerPublisher);
+  void getMacAddr(char* macAddr, unsigned int macAddrSize);
+
   void configureFish(unsigned int fishHwId, const char* country, const char* city);
+  void notifyConfigDone();
 
 private:
-    IoF_WiFiClient* m_wifiClient;
-    MqttClient* m_mqttClient;
     FishActuator* m_fishActuator;
+    IofTriggerPublisher* m_triggerPublisher;
 
 private:  // forbidden functions
   IoF_ConfigurationAdapter();

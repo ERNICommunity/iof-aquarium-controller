@@ -1,289 +1,115 @@
+#define MQTT_MAX_PACKET_SIZE 1000
+
 #include <Arduino.h>
-#include <Wire.h>
-#include <CapSensor.h>
-#include <Timer.h>
-#include <TimerContext.h>
-#include <CmdHandler.h>
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+
+// PlatformIO libraries
+#include <Adafruit_PWMServoDriver.h> // pio lib install 30,   lib details see https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
+#include <ArduinoJson.h>             // pio lib install 64,   lib details see https://github.com/bblanchon/ArduinoJson
+#include <PubSubClient.h>            // pio lib install 89,   lib details see https://github.com/knolleary/PubSubClient
+#include <SerialCommand.h>           // pio lib install 173,  lib details see https://github.com/kroimon/Arduino-SerialCommand
+#include <ThingSpeak.h>              // pio lib install 550,  lib details see https://github.com/mathworks/thingspeak-arduino
+#include <Adafruit_CAP1188.h>        // pio lib install 693,  lib details see https://github.com/adafruit/Adafruit_CAP1188_Library
+#include <Timer.h>                   // pio lib install 1699, lib details see 
+
+// private libraries
 #include <DbgCliNode.h>
 #include <DbgCliTopic.h>
-#include <IoF_WiFiClient.h>
-#include <IoF_MqttClientAdapter.h>
+#include <DbgTracePort.h>
+#include <DbgTraceContext.h>
+#include <DbgTraceOut.h>
+#include <DbgPrintConsole.h>
+#include <DbgTraceLevel.h>
 #include <MqttClient.h>
-#include <PubSubClient.h>
+#include <MqttClientController.h>
+#include <PubSubClientWrapper.h>
+#include <MqttTopic.h>
+#include <CapSensor.h>
+#include <Configuration.h>
 #include <FishHal.h>
 #include <FishActuator.h>
-#include <Adafruit_CAP1188.h>
-#include <Adafruit_PWMServoDriver.h>
-#include <SerialCommand.h>
-#include <Configuration.h>
+#include <CmdHandler.h>
+#include <AppDebug.h>
+#include <ProductDebug.h>
 #include <IoFConfigurationAdapter.h>
+#include <IoFMqttTopics.h>
+#include <MyCapSensorAdatper.h>
+#include <IofTriggerPublisher.h>
+#include <TestFishNotificationAdapter.h>
+#include <TestIofConfigRequestSubscriber.h>
 
-// Update these with values suitable for your network.
-#define WIFI_SSID       "DNNet"
-#define WIFI_PWD        "Furz1234"
-#define MQTT_SERVER_IP  "iot.eclipse.org"
-#define MQTT_PORT       1883
-
+#define MQTT_SERVER     "iot.eclipse.org"
+//#define MQTT_SERVER     "test.mosquitto.org"
 #define PUBLISH_SUFFIX  "sensor/aquarium-trigger"
 
-SerialCommand* sCmd = 0;
-IoF_WiFiClient* wifiClient = 0;
-MqttClient* mqttClient = 0;
-FishActuator* fishActuator = 0;
-Configuration* cfg = 0;
+SerialCommand*        sCmd              = 0;
+WiFiClient*           wifiClient        = 0;
+
+FishActuator*         fishActuator      = 0;
+IofTriggerPublisher*  triggerPublisher  = 0;
+Configuration*        config            = 0;
 
 #define SDA_PIN 4
 #define SCL_PIN 5
 
-//-----------------------------------------------------------------------------
-// Arduino Cmd I/F
-//-----------------------------------------------------------------------------
-void dbgCliExecute()
-{
-  if ((0 != sCmd) && (0 != DbgCli_Node::RootNode()))
-  {
-    const unsigned int firstArgToHandle = 1;
-    const unsigned int maxArgCnt = 10;
-    char* args[maxArgCnt];
-    char* arg = const_cast<char*>("dbg");
-    unsigned int arg_cnt = 0;
-    while ((maxArgCnt > arg_cnt) && (0 != arg))
-    {
-      args[arg_cnt] = arg;
-      arg = sCmd->next();
-      arg_cnt++;
-    }
-    DbgCli_Node::RootNode()->execute(static_cast<unsigned int>(arg_cnt), const_cast<const char**>(args), firstArgToHandle);
-  }
-}
-
-void sayHello()
-{
-  char *arg;
-  if (0 != sCmd)
-  {
-    arg = sCmd->next();    // Get the next argument from the SerialCommand object buffer
-  }
-  if (arg != NULL)       // As long as it exists, take it
-  {
-    Serial.print("Hello ");
-    Serial.println(arg);
-  }
-  else
-  {
-    Serial.println("Hello, whoever you are");
-  }
-}
-
-// This is the default handler, and gets called when no other command matches.
-void unrecognized(const char *command)
-{
-  Serial.println("What?");
-}
-
-//-----------------------------------------------------------------------------
-// Free Heap Logger
-//-----------------------------------------------------------------------------
-extern "C"
-{
-  #include "user_interface.h"
-}
-const unsigned long c_freeHeapLogIntervalMillis = 10000;
-class FreeHeapLogTimerAdapter : public TimerAdapter
-{
-public:
-  void timeExpired()
-  {
-    Serial.print(millis() / 1000);
-    Serial.print(" - Free Heap Size: ");
-    Serial.println(system_get_free_heap_size());
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Fish Event & Error Notification Adapter
-//-----------------------------------------------------------------------------
-class TestFishNotificationAdapter: public FishNotificationAdapter
-{
-public:
-  void notifyFishEvent(unsigned int fishHwId, FishEvent event)
-  {
-    Serial.printf("notifyFishEvent(), fishHwId=%d, event=%s\n", fishHwId,
-        event == FishNotificationAdapter::EvtFishActivated ? "FishActivated" :
-        event == FishNotificationAdapter::EvtFishAdded     ? "FishAdded    " :
-        event == FishNotificationAdapter::EvtFishDeleted   ? "FishDeleted  " :
-        event == FishNotificationAdapter::EvtFishStopped   ? "FishStopped  " : "UNKNOWN");
-  }
-
-  void notifyFishError(unsigned int fishHwId, FishError error)
-  {
-    Serial.printf("notifyFishError(), fishHwId=%d, error=%s\n", fishHwId,
-        error == FishNotificationAdapter::ErrFishQueueFull      ? "FishQueueFull      " :
-        error == FishNotificationAdapter::ErrFishQueueCorrupt   ? "FishQueueCorrupt   " :
-        error == FishNotificationAdapter::ErrFishAlreadyExists  ? "FishAlreadyExists  " :
-        error == FishNotificationAdapter::ErrFishBusy           ? "FishBusy           " :
-        error == FishNotificationAdapter::ErrFishHwIdOutOfRange ? "FishHwIdOutOfRange " :
-        error == FishNotificationAdapter::ErrFishNotFound       ? "FishNotFound       " : "UNKNOWN");
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Sensor Action Adapter
-//-----------------------------------------------------------------------------
-class MyCapSensorAdatper: public CapSensorAdapter
-{
-private:
-  FishActuator* m_fishActuator;
-  unsigned int m_hwId;
-public:
-  MyCapSensorAdatper(FishActuator* fishActuator, unsigned int hwId)
-  : m_fishActuator(fishActuator)
-  , m_hwId(hwId)
-  { }
-
-  virtual void notifyCapTouched(uint8_t currentTouchValue)
-  {
-    if (0 != (currentTouchValue & 1<<0))
-    {
-      // now it is time to do something
-      Serial.println("Touch down!");
-      if (0 != mqttClient)
-      {
-        mqttClient->publishCapTouched();
-      }
-    }
-    if (0 != (currentTouchValue & 1<<7))
-    {
-      if (0 != m_fishActuator)
-      {
-        m_fishActuator->stopFish();
-      }
-    }
-  }
-};
-
-//-----------------------------------------------------------------------------
-// MQTT callback, when receiving a subscribed topic
-//-----------------------------------------------------------------------------
-void callback(char* topic, byte* payload, unsigned int length)
-{
-  char msg[length+1];
-  memcpy(msg, payload, length);
-  msg[length] = 0;
-  Serial.print(F("Message arrived ["));
-  Serial.print(topic);
-  Serial.print(F("] "));
-  Serial.println(msg);
-
-  if (0 == strncmp(topic, "iof/config", strlen("iof/config")))
-  {
-    Serial.println(F("Config received!"));
-    if (0 != cfg)
-    {
-      cfg->setConfig(msg, length+1);
-    }
-  }
-  else
-  {
-    // check if received topic ends with expected aquarium trigger
-    if (0 != strstr(topic, PUBLISH_SUFFIX))
-    {
-      // get Fish ID from payload
-      Serial.print(F("Aquarium trigger event received! activate fish for: "));
-      Serial.println(msg);
-      unsigned int fishId = cfg->getFishId(msg);
-      if ((0 != fishActuator) && (fishId != Configuration::FISH_ID_INVALID))
-      {
-        Serial.print(F("Aquarium trigger event received! activate fish ID: "));
-        Serial.println(fishId);
-        fishActuator->activateFish(fishId);
-      }
-    }
-  }
-}
-
-//The setup function is called once at startup of the sketch
 void setup()
 {
-  //-----------------------------------------------------------------------------
-  // Serial Command Object for Debug CLI
-  //-----------------------------------------------------------------------------
-  Serial.begin(115200);
-  sCmd = new SerialCommand();
-  DbgCli_Node::AssignRootNode(new DbgCli_Topic(0, "dbg", "Internet of Fish Aquarium Controller Debug CLI Root Node."));
+  pinMode(BUILTIN_LED, OUTPUT);
+  digitalWrite(BUILTIN_LED, 1);
 
-  // Setup callbacks for SerialCommand commands
-  if (0 != sCmd)
-  {
-    sCmd->addCommand("dbg", dbgCliExecute);
-    sCmd->addCommand("hello", sayHello);        // Echos the string argument back
-    sCmd->setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
-  }
-
-  Serial.println();
-  Serial.println(F("---------------------------------------------"));
-  Serial.println(F("Hello from IoF Aquarium Controller!"));
-  Serial.println(F("---------------------------------------------"));
-  Serial.println();
+  setupProdDebugEnv();
 
   //-----------------------------------------------------------------------------
-  // Free Heap Logger
+  // ESP8266 WiFi Client
   //-----------------------------------------------------------------------------
-  new Timer(new FreeHeapLogTimerAdapter(), Timer::IS_RECURRING, c_freeHeapLogIntervalMillis);
-
-  Wire.begin(SDA_PIN, SCL_PIN);
+  wifiClient = new WiFiClient();
 
   //-----------------------------------------------------------------------------
-  // WiFi Connection
+  // ThingSpeak Client
   //-----------------------------------------------------------------------------
-  wifiClient = new IoF_WiFiClient(const_cast<char*>(WIFI_SSID), const_cast<char*>(WIFI_PWD));
-
-  if (0 != wifiClient)
-  {
-    wifiClient->begin();
-  }
+  ThingSpeak.begin(*(wifiClient));
 
   //---------------------------------------------------------------------------
   // Fish Actuator
   //---------------------------------------------------------------------------
   fishActuator = new FishActuator(new TestFishNotificationAdapter());
 
+  //-----------------------------------------------------------------------------
+  // Configuration
+  //-----------------------------------------------------------------------------
+  IoF_ConfigurationAdapter* configAdapter = new IoF_ConfigurationAdapter(fishActuator);
+  config = new Configuration(configAdapter);
+
+  //---------------------------------------------------------------------------
+  // Trigger Publisher
+  //---------------------------------------------------------------------------
+  triggerPublisher = new IofTriggerPublisher(config);
+  configAdapter->attachTriggerPublisher(triggerPublisher);
+
   //---------------------------------------------------------------------------
   // Capacitive Sensor
   //---------------------------------------------------------------------------
-  new CapSensor(new MyCapSensorAdatper(fishActuator, 0));
+  new CapSensor(new MyCapSensorAdatper(fishActuator, triggerPublisher));
 
   //-----------------------------------------------------------------------------
   // MQTT Client
   //-----------------------------------------------------------------------------
-  mqttClient = new MqttClient(MQTT_SERVER_IP, MQTT_PORT, wifiClient);
-  if (0 != mqttClient)
-  {
-    mqttClient->setCallback(callback);
-    mqttClient->startupClient();
-  }
-
-  //-----------------------------------------------------------------------------
-  // Configuration
-  //-----------------------------------------------------------------------------
-  cfg = new Configuration(new IoF_ConfigurationAdapter(wifiClient, mqttClient, fishActuator));
-
-  if ((0 != mqttClient) && (0 != cfg))
-  {
-    mqttClient->attachAdapter(new IoF_MqttClientAdapter(wifiClient, cfg));
-  }
+  MqttClient.begin(MQTT_SERVER);
+  new TestLedMqttSubscriber();
+//  new TestIofConfigRequestSubscriber();
+  new IofConfigMqttSubscriber(config);
+  new IofTriggerMqttSubscriber(config, fishActuator);
+  new MqttTopicPublisher("iof/config", WiFi.macAddress().c_str(), MqttTopicPublisher::DO_AUTO_PUBLISH);
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
-  if (0 != mqttClient)
-  {
-    mqttClient->loop();     // process MQTT protocol
-  }
   if (0 != sCmd)
   {
-    sCmd->readSerial();     // process serial commands
+    sCmd->readSerial();   // process serial commands
   }
-  yield();                // process Timer expiration evaluation
+  MqttClient.loop();      // process MQTT protocol
+  yield();                // process Timers
 }

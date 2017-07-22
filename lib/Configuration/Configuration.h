@@ -20,21 +20,20 @@ public:
 
   /**
    * Get MAC Address.
-   * @return macAddr c-String with the MAC address in the form "xx:xx:xx:xx:xx:xx" (memory allocated by callee)
+   * @param macAddr c-String with the MAC address in the form "xx:xx:xx:xx:xx:xx"
+   * @param macAddrSize buffer size for the mac address
    */
-  virtual const char* getMacAddr() = 0;
-
-  /**
-   *
-   */
-  virtual void configureAquarium(const char* country, const char* city) = 0;
+  virtual void getMacAddr(char* macAddr, unsigned int macAddrSize) = 0;
 
   /**
    *
    */
   virtual void configureFish(unsigned int fishHwId, const char* country, const char* city) = 0;
 
-
+  /**
+   *
+   */
+  virtual void notifyConfigDone() = 0;
 
 protected:
   ConfigurationAdapter() { }
@@ -45,6 +44,8 @@ private:  // forbidden functions
 
 //-----------------------------------------------------------------------------
 
+class DbgTrace_Port;
+
 class Configuration
 {
 public:
@@ -53,7 +54,7 @@ public:
 
   void attachAdapter(ConfigurationAdapter* adapter);
 
-  void setConfig(char json[], unsigned int jsonSize);
+  void setConfig(const char* json, unsigned int jsonSize);
 
   /**
    * Get Fish ID by the assigned city.
@@ -64,15 +65,25 @@ public:
 
   bool isConfigured() const { return m_isConfigured; }
 
+  const char* country() const { return m_country; }
+  const char* city()    const { return m_city; }
+
 public:
   static const unsigned int FISH_ID_INVALID;   ///
 
 private:
+  static const unsigned int s_maxJsonSize;
+  static const unsigned int s_maxNameSize;
+  static const unsigned int s_macAddrSize;
   ConfigurationAdapter* m_adapter;
   char* m_json;
   unsigned int m_jsonSize;
-  static const unsigned int s_maxJsonSize;
   bool m_isConfigured;
+  char* m_country;
+  char* m_city;
+  char* m_macAddr;
+  DbgTrace_Port* m_trPort;
+
 
 private:  // forbidden functions
   Configuration(const Configuration& src);              // copy constructor
