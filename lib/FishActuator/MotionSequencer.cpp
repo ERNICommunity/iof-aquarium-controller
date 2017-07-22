@@ -96,7 +96,7 @@ MotionSequencer::~MotionSequencer()
 
 void MotionSequencer::prepareSequence()
 {
-  int velocity = 2;
+  int velocity = 1;
   unsigned long pauseTimeMillis = 500;
   new CmdMoveToAngle(m_sequence, m_cmdTimeOutMillis, -90, velocity);
   new CmdStop(m_sequence, pauseTimeMillis);

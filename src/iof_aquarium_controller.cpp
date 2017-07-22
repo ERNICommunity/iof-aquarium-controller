@@ -39,7 +39,8 @@
 #include <TestFishNotificationAdapter.h>
 #include <TestIofConfigRequestSubscriber.h>
 
-#define MQTT_SERVER     "test.mosquitto.org"
+#define MQTT_SERVER     "iot.eclipse.org"
+//#define MQTT_SERVER     "test.mosquitto.org"
 #define PUBLISH_SUFFIX  "sensor/aquarium-trigger"
 
 SerialCommand*        sCmd              = 0;
@@ -96,7 +97,7 @@ void setup()
   //-----------------------------------------------------------------------------
   MqttClient.begin(MQTT_SERVER);
   new TestLedMqttSubscriber();
-  new TestIofConfigRequestSubscriber();
+//  new TestIofConfigRequestSubscriber();
   new IofConfigMqttSubscriber(config);
   new IofTriggerMqttSubscriber(config, fishActuator);
   new MqttTopicPublisher("iof/config", WiFi.macAddress().c_str(), MqttTopicPublisher::DO_AUTO_PUBLISH);

@@ -44,7 +44,7 @@ VelocityControl::VelocityControl(MotionSequencer* sequencer)
 , m_angle(0)
 , m_targetAngle(0)
 , m_angleVelocity(1)
-, m_ctrlIntervalMillis(20)
+, m_ctrlIntervalMillis(40)
 { }
 
 VelocityControl::~VelocityControl()
