@@ -1,9 +1,7 @@
 [submodule "lib/CmdSequence"]
 	path = lib/CmdSequence
 	url = https://github.com/dniklaus/CmdSequence.git
-[submodule "lib/dbg-trace"]
-	path = lib/dbg-trace
-	url = https://github.com/ERNICommunity/dbg-trace.git
+
 
 
 
