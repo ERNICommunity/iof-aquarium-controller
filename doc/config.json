@@ -1,0 +1,60 @@
+{
+   "aquarium-id":"5C:CF:7F:07:5E:6A",
+   "fish-mapping":[
+      {
+         "fish-id":"1",
+         "office":{
+            "office-id":"1",
+            "city":"Bern",
+            "country":"CH"
+         }
+      },
+      {
+         "fish-id":"2",
+         "office":{
+            "office-id":"2",
+            "city":"Zurich",
+            "country":"CH"
+         }
+      }
+   ],
+   "office":{
+      "office-id":"2",
+      "city":"Zurich",
+      "country":"CH"
+   }
+}
+
+{
+ "aquarium-id": "4321",
+ "fish-mapping": [{
+      "fish-id": "1",
+      "office": {}
+    }
+  ]
+}
+
+
+{
+  "aquarium-id" : "4321",
+  "fish-mapping" : [ {
+    "fish-id" : "1",
+    "office" : {
+      "office-id" : "1",
+      "city" : "Geneva",
+      "country" : "CH"
+    }
+  }, {
+    "fish-id" : "2",
+    "office" : {
+      "office-id" : "2",
+      "city" : "Zurich",
+      "country" : "CH"
+    }
+  } ],
+  "office" : {
+    "office-id" : "2",
+    "city" : "Zurich",
+    "country" : "CH"
+  }
+}
