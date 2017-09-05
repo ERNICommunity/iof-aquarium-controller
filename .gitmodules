@@ -4,9 +4,7 @@
 [submodule "lib/dbg-trace"]
 	path = lib/dbg-trace
 	url = https://github.com/ERNICommunity/dbg-trace.git
-[submodule "lib/dbg-cli"]
-	path = lib/dbg-cli
-	url = https://github.com/ERNICommunity/debug-cli.git
+
 
 
 
