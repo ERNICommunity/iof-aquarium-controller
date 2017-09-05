@@ -7,8 +7,6 @@
 [submodule "lib/dbg-cli"]
 	path = lib/dbg-cli
 	url = https://github.com/ERNICommunity/debug-cli.git
-[submodule "lib/mqtt-client"]
-	path = lib/mqtt-client
-	url = https://github.com/ERNICommunity/mqtt-client.git
+
 
 
