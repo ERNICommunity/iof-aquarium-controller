@@ -175,7 +175,7 @@ public:
   void execute(unsigned int argc, const char** args, unsigned int idxToFirstArgToHandle)
   {
     Serial.println();
-   if (argc - idxToFirstArgToHandle != 2)
+    if (argc - idxToFirstArgToHandle != 2)
     {
       printUsage();
     }
