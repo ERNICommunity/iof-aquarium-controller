@@ -45,7 +45,7 @@ private: // forbidden default functions
 //-----------------------------------------------------------------------------
 
 CmdMoveToAngle::CmdMoveToAngle(CmdSequence* cmdSeq, unsigned long cmdTimeOutMillis, int angle, int velocity)
-: CmdHandler(cmdSeq, cmdTimeOutMillis, "CmdMoveToAngle")
+: Cmd(cmdSeq, cmdTimeOutMillis, "CmdMoveToAngle")
 , m_angle(angle)
 , m_velocity(velocity)
 { }

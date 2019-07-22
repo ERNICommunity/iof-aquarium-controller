@@ -29,7 +29,7 @@
 #include <Configuration.h>
 #include <FishHal.h>
 #include <FishActuator.h>
-#include <CmdHandler.h>
+#include <Cmd.h>
 #include <AppDebug.h>
 #include <ProductDebug.h>
 #include <IoFConfigurationAdapter.h>

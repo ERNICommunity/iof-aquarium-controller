@@ -8,7 +8,7 @@
 #ifndef PROD_FISHACTUATOR_SRC_MOTIONSEQUENCER_H_
 #define PROD_FISHACTUATOR_SRC_MOTIONSEQUENCER_H_
 
-#include <CmdHandler.h>
+#include <Cmd.h>
 
 class CmdSequence;
 class FishCollection;
@@ -17,7 +17,7 @@ class VelocityControl;
 
 //-----------------------------------------------------------------------------
 
-class CmdMoveToAngle : public CmdHandler
+class CmdMoveToAngle : public Cmd
 {
 public:
   CmdMoveToAngle(CmdSequence* cmdSeq, unsigned long cmdTimeOutMillis, int angle, int velocity);
